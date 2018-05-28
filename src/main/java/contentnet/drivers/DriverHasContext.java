@@ -18,10 +18,12 @@ public class DriverHasContext {
 
     static final int MAX_RECUSRSION_LEVEL = 5;
     public static final int DELAY = 850;
+    static  final String CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
 
     public static void main(String[] args) {
 
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        wordGraph.addVertex(CONCEPT_ROOT_NODE);
 
         String farWord = "backpack";
         String word = "backpack";
@@ -50,15 +52,21 @@ public class DriverHasContext {
             if (relatedWords.size() > 0) {
                 for (String relatedWord : relatedWords) {
                     wordGraph.addVertex(relatedWord);
-                    wordGraph.addEdge(word, relatedWord);
-                    //wordGraph.addEdge(relatedWord, word);
+                    //wordGraph.addEdge(word, relatedWord);
+                    wordGraph.addEdge(relatedWord, word);
                     doDelay(DELAY);
                     processWords(wordGraph, farWord, Utils.getLabelFromConceptContextName(relatedWord), recursionLevel, ongoingProcessedWords);
                 }
             }
+            else {
+                //wordGraph.addEdge(word, CONCEPT_ROOT_NODE);
+                wordGraph.addEdge(CONCEPT_ROOT_NODE, word);
+            }
             return recursionLevel;
         } else {
             //System.out.println("Bottom of recursion reached");
+            //wordGraph.addEdge(word, CONCEPT_ROOT_NODE);
+            wordGraph.addEdge(CONCEPT_ROOT_NODE, word);
             return recursionLevel;
         }
     }
@@ -108,7 +116,7 @@ public class DriverHasContext {
             /*for (String contextOf : hasContextResuts) {
                 System.out.println("Context: " + word + " => " + contextOf);
             }*/
-                TreeMap<Float, String> contextPriorityWords = new TreeMap<Float, String>();
+                TreeMap<Float, String> contextPriorityWords = new TreeMap<>();
                 for (int i = filteredWords.size() - 1; i >= 0; i--) {
                     String nextRelatedWord = filteredWords.get(i);
                     Map<String, Float> contextWeight = getRelationWeight(nextRelatedWord, hasContextResuts);
