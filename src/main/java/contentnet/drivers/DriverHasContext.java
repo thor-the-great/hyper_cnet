@@ -1,47 +1,74 @@
 package contentnet.drivers;
 
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.swing.mxGraphComponent;
 import contentnet.ConceptnetAPI;
 import contentnet.ResultProcessor;
 import contentnet.Utils;
+import contentnet.graph.GraphUtils;
 import contentnet.weightprocessing.WeightProcessingContextRelationStrategy;
 import contentnet.weightprocessing.WeightProcessingDirectRelationStrategy;
 import contentnet.weightprocessing.WeightProcessingFarRelationStrategy;
 import org.jgrapht.Graph;
-import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.traverse.DepthFirstIterator;
-import org.jgrapht.traverse.GraphIterator;
-
-import javax.swing.*;
 import java.util.*;
 
 public class DriverHasContext {
 
-    static final int MAX_RECUSRSION_LEVEL = 3;
+    static final int MAX_RECUSRSION_LEVEL = 8;
     public static final int DELAY = 850;
     static  final String CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
+    static final  boolean IS_LOG_ENABLED = false;
 
     public static void main(String[] args) {
 
         DriverHasContext driver = new DriverHasContext();
 
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        wordGraph.addVertex(CONCEPT_ROOT_NODE);
-
-        String farWord = "case";
-        String word = "case";
-        wordGraph.addVertex(word);
+        String farWord = "";
+        String word = "";
         Set<String> ongoingProcessedWords = new HashSet<>();
+        /*wordGraph.addVertex(CONCEPT_ROOT_NODE);
 
+
+        /*farWord = "case";
+        word = "case";
+        if  (!wordGraph.containsVertex(word))
+            wordGraph.addVertex(word);
         driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
+        GraphUtils.printGraph(wordGraph);
 
-        driver.printGraph(wordGraph);
+        farWord = "cable";
+        word = "cable";
+        if (!wordGraph.containsVertex(word))
+            wordGraph.addVertex(word);
+        driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
+        GraphUtils.printGraph(wordGraph);
 
-        driver.displayGraph(wordGraph);
+        farWord = "mount";
+        word = "mount";
+        if (!wordGraph.containsVertex(word))
+            wordGraph.addVertex(word);
+        driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
+        GraphUtils.printGraph(wordGraph);
+
+        //driver.displayGraph(wordGraph);
+
+        GraphUtils.exportGraph(wordGraph, "C:\\work\\ariba\\wordGraph.csv");*/
+
+        GraphUtils.importGraph(wordGraph);
+
+        String[] words = new String[]{
+                "adapter", "book", "camera", "background", "microphone", "dvd", "backpack", "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light"
+        };
+        for (String wordToProcess: words ) {
+            farWord = wordToProcess; word = farWord;
+            if  (!wordGraph.containsVertex(word))
+                wordGraph.addVertex(word);
+            driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
+            GraphUtils.printGraph(wordGraph);
+        }
+
+        GraphUtils.exportGraph(wordGraph, GraphUtils.DEFAULT_CSV_FILE_PATH);
     }
 
     int processWords(Graph<String, DefaultEdge> wordGraph, String farWord, String word, int recursionLevel, Set<String> ongoingProcessedWords) {
@@ -53,22 +80,30 @@ public class DriverHasContext {
             List<String> relatedWords = processWordsInternally(farWord, word, ongoingProcessedWords, isProcessContext);
             if (relatedWords.size() > 0) {
                 for (String relatedWord : relatedWords) {
-                    wordGraph.addVertex(relatedWord);
-                    //wordGraph.addEdge(word, relatedWord);
-                    wordGraph.addEdge(relatedWord, word);
+                    if (!wordGraph.containsVertex(relatedWord)) {
+                        wordGraph.addVertex(relatedWord);
+                        //wordGraph.addEdge(word, relatedWord);
+                    }
+                    if (!wordGraph.containsEdge(relatedWord, word)) {
+                        wordGraph.addEdge(relatedWord, word);
+                    }
                     Utils.doDelay(DELAY);
                     processWords(wordGraph, farWord, Utils.getLabelFromConceptContextName(relatedWord), recursionLevel, ongoingProcessedWords);
                 }
             }
             else {
                 //wordGraph.addEdge(word, CONCEPT_ROOT_NODE);
-                wordGraph.addEdge(CONCEPT_ROOT_NODE, word);
+                if (!wordGraph.containsEdge(CONCEPT_ROOT_NODE, word)) {
+                    wordGraph.addEdge(CONCEPT_ROOT_NODE, word);
+                }
             }
             return recursionLevel;
         } else {
             //System.out.println("Bottom of recursion reached");
             //wordGraph.addEdge(word, CONCEPT_ROOT_NODE);
-            wordGraph.addEdge(CONCEPT_ROOT_NODE, word);
+            if (!wordGraph.containsEdge(CONCEPT_ROOT_NODE, word)) {
+                wordGraph.addEdge(CONCEPT_ROOT_NODE, word);
+            }
             return recursionLevel;
         }
     }
@@ -84,11 +119,11 @@ public class DriverHasContext {
 
         //System.out.println("--------------------------------");
         Map<String, Float> relationWeight = getRelationWeight(word, hyperResult);
-        ResultProcessor.getInstance().processWordsWeights(word, relationWeight, new WeightProcessingDirectRelationStrategy(), false);
+        ResultProcessor.getInstance().processWordsWeights(word, relationWeight, new WeightProcessingDirectRelationStrategy(), IS_LOG_ENABLED);
         //System.out.println("--------------------------------");
         ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, relationWeight);
         Map<String, Float> farRelationWeight = getRelationWeight(farWord, hyperResult);
-        ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), false);
+        ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), IS_LOG_ENABLED);
         List<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, farRelationWeight);
 
         /*List<String> relatedResult =
@@ -122,7 +157,7 @@ public class DriverHasContext {
                 for (int i = filteredWords.size() - 1; i >= 0; i--) {
                     String nextRelatedWord = filteredWords.get(i);
                     Map<String, Float> contextWeight = getRelationWeight(nextRelatedWord, hasContextResuts);
-                    ResultProcessor.getInstance().processWordsWeights(nextRelatedWord, contextWeight, new WeightProcessingContextRelationStrategy(), false);
+                    ResultProcessor.getInstance().processWordsWeights(nextRelatedWord, contextWeight, new WeightProcessingContextRelationStrategy(), IS_LOG_ENABLED);
                     for (String wordMatchesContext : contextWeight.keySet()) {
                         contextPriorityWords.put(contextWeight.get(wordMatchesContext), nextRelatedWord);
                     }
@@ -162,32 +197,5 @@ public class DriverHasContext {
             Utils.doDelay(DELAY);
         }
         return wordsWeight;
-    }
-
-    void printGraph(Graph<String, DefaultEdge> wordGraph) {
-        GraphIterator<String, DefaultEdge> iterator = new DepthFirstIterator<>(wordGraph);
-        while (iterator.hasNext()) {
-            String vertex = iterator.next();
-            Set<DefaultEdge> edges = wordGraph.outgoingEdgesOf(vertex);
-            for (DefaultEdge edge: edges) {
-                System.out.println(wordGraph.getEdgeSource(edge) + "->" + wordGraph.getEdgeTarget(edge));
-            }
-        }
-    }
-
-    void displayGraph(Graph<String, DefaultEdge> wordGraph) {
-        JFrame frame = new JFrame("Concept net word graph");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<>(wordGraph);
-
-        mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
-        layout.execute(graphAdapter.getDefaultParent());
-
-        frame.add(new mxGraphComponent(graphAdapter));
-
-        frame.pack();
-        frame.setLocationByPlatform(true);
-        frame.setVisible(true);
     }
 }
