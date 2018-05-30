@@ -7,6 +7,7 @@ import contentnet.graph.GraphUtils;
 import contentnet.weightprocessing.WeightProcessingContextRelationStrategy;
 import contentnet.weightprocessing.WeightProcessingDirectRelationStrategy;
 import contentnet.weightprocessing.WeightProcessingFarRelationStrategy;
+import contentnet.weightprocessing.WeightProcessingRelatedToStrategy;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -14,10 +15,10 @@ import java.util.*;
 
 public class DriverHasContext {
 
-    static final int MAX_RECUSRSION_LEVEL = 3;
+    static final int MAX_RECUSRSION_LEVEL = 5;
     public static final int DELAY = 850;
     static  final String CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
-    static final  boolean IS_LOG_ENABLED = false;
+    static final  boolean IS_LOG_ENABLED = true;
 
     public static void main(String[] args) {
 
@@ -67,7 +68,8 @@ public class DriverHasContext {
             GraphUtils.printGraph(wordGraph);
         }*/
 
-        GraphUtils.exportGraph(wordGraph, GraphUtils.DEFAULT_CSV_FILE_PATH);
+        GraphUtils.exportGraph(wordGraph, GraphUtils.DEFAULT_CSV_FILE_PATH);*/
+        GraphUtils.displayGraph(wordGraph);
     }
 
     int processWords(Graph<String, DefaultEdge> wordGraph, String farWord, String word, int recursionLevel, Set<String> ongoingProcessedWords) {
@@ -182,6 +184,56 @@ public class DriverHasContext {
                     }
                 }
             }
+
+            //added relatedTo
+            List<String> relatedWords =
+                ResultProcessor.getInstance().processHypernyms(
+                    ConceptnetAPI.getInstance().getRelatedTo(word), word);
+            relatedWords = ResultProcessor.getInstance().sanitizeWordList(relatedWords, ongoingProcessedWords);
+
+            Map<String, Float> relatedToWordsWeight = getRelationWeight(word, relatedWords);
+            ResultProcessor.getInstance().processWordsWeights(word, relatedToWordsWeight, new WeightProcessingRelatedToStrategy(), IS_LOG_ENABLED);
+            ResultProcessor.getInstance().adjustWordsPerWeights(relatedWords, relatedToWordsWeight);
+
+            //now search related from the same context as main word
+            if (hasContextResuts.size() > 0 ) {
+            /*for (String contextOf : hasContextResuts) {
+                System.out.println("Context: " + word + " => " + contextOf);
+            }*/
+                TreeMap<Float, String> contextPriorityWords = new TreeMap<>();
+                for (int i = relatedWords.size() - 1; i >= 0; i--) {
+                    String nextRelatedToWord = relatedWords.get(i);
+                    //TODO - change relation check to contextOf
+                    Map<String, Float> contextWeight = getRelationWeight(nextRelatedToWord, hasContextResuts);
+                    ResultProcessor.getInstance().processWordsWeights(nextRelatedToWord, contextWeight, new WeightProcessingContextRelationStrategy(), IS_LOG_ENABLED);
+                    for (String wordMatchesContext : contextWeight.keySet()) {
+                        contextPriorityWords.put(contextWeight.get(wordMatchesContext), nextRelatedToWord);
+                    }
+
+                /*if (contextWeight.size() == 0) {
+                    filteredWords.remove(i);
+                    System.out.println("Word '" + nextRelatedWord + "' removed due to context mismatch");
+                }*/
+                }
+                int count = 0;
+                List<String> passedPriorityContextWords = new ArrayList<>();
+                for (Float weight : contextPriorityWords.descendingKeySet()) {
+                    if (count < 5) {
+                        passedPriorityContextWords.add(contextPriorityWords.get(weight));
+                        count++;
+                    } else
+                        break;
+                }
+                for (int i = relatedWords.size() - 1; i >= 0; i--) {
+                    if (!passedPriorityContextWords.contains(relatedWords.get(i))) {
+                        //System.out.println("Word '" + filteredWords.get(i) + "' removed due to context mismatch");
+                        relatedWords.remove(i);
+                    }
+                }
+            }
+
+            filteredWords.addAll(relatedWords);
+
         }
         return filteredWords;
     }
