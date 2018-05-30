@@ -12,12 +12,26 @@ import org.jgrapht.traverse.GraphIterator;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 public class GraphUtils {
 
-    public static final String DEFAULT_CSV_FILE_PATH = "C:\\work\\ariba\\wordGraph.csv";
+    static Properties props = new Properties();
+
+    static {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        try(InputStream resourceStream = loader.getResourceAsStream("conf.properties")) {
+            props.load(resourceStream);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static final String DEFAULT_CSV_FILE_PATH = props.getProperty("DEFAULT_CSV_FILE_PATH");
 
     public static void displayGraph(Graph<String, DefaultEdge> wordGraph) {
         JFrame frame = new JFrame("Concept net word graph");

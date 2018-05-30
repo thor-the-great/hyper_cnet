@@ -14,7 +14,7 @@ import java.util.*;
 
 public class DriverHasContext {
 
-    static final int MAX_RECUSRSION_LEVEL = 8;
+    static final int MAX_RECUSRSION_LEVEL = 3;
     public static final int DELAY = 850;
     static  final String CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
     static final  boolean IS_LOG_ENABLED = false;
@@ -27,17 +27,16 @@ public class DriverHasContext {
         String farWord = "";
         String word = "";
         Set<String> ongoingProcessedWords = new HashSet<>();
-        /*wordGraph.addVertex(CONCEPT_ROOT_NODE);
+        wordGraph.addVertex(CONCEPT_ROOT_NODE);
 
 
-        /*farWord = "case";
-        word = "case";
-        if  (!wordGraph.containsVertex(word))
-            wordGraph.addVertex(word);
-        driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
-        GraphUtils.printGraph(wordGraph);
+        farWord = "case";
+        if  (!wordGraph.containsVertex(farWord))
+            wordGraph.addVertex(farWord);
+        driver.processWords(wordGraph, farWord, farWord, 0, ongoingProcessedWords);
+        //GraphUtils.printGraph(wordGraph);
 
-        farWord = "cable";
+        /*farWord = "cable";
         word = "cable";
         if (!wordGraph.containsVertex(word))
             wordGraph.addVertex(word);
@@ -55,9 +54,9 @@ public class DriverHasContext {
 
         GraphUtils.exportGraph(wordGraph, "C:\\work\\ariba\\wordGraph.csv");*/
 
-        GraphUtils.importGraph(wordGraph);
+        //GraphUtils.importGraph(wordGraph);
 
-        String[] words = new String[]{
+        /*String[] words = new String[]{
                 "adapter", "book", "camera", "background", "microphone", "dvd", "backpack", "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light"
         };
         for (String wordToProcess: words ) {
@@ -66,7 +65,7 @@ public class DriverHasContext {
                 wordGraph.addVertex(word);
             driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
             GraphUtils.printGraph(wordGraph);
-        }
+        }*/
 
         GraphUtils.exportGraph(wordGraph, GraphUtils.DEFAULT_CSV_FILE_PATH);
     }
