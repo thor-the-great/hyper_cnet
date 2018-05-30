@@ -1,5 +1,6 @@
 package contentnet.graph;
 
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
@@ -39,7 +40,7 @@ public class GraphUtils {
 
         JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<>(wordGraph);
 
-        mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
+        mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter);
         layout.execute(graphAdapter.getDefaultParent());
 
         frame.add(new mxGraphComponent(graphAdapter));

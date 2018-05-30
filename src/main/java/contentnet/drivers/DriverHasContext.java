@@ -68,7 +68,7 @@ public class DriverHasContext {
             GraphUtils.printGraph(wordGraph);
         }*/
 
-        GraphUtils.exportGraph(wordGraph, GraphUtils.DEFAULT_CSV_FILE_PATH);*/
+        GraphUtils.exportGraph(wordGraph, GraphUtils.DEFAULT_CSV_FILE_PATH);
         GraphUtils.displayGraph(wordGraph);
     }
 
