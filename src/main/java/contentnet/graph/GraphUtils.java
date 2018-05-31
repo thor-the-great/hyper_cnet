@@ -2,7 +2,6 @@ package contentnet.graph;
 
 import com.mxgraph.layout.*;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.orthogonal.mxOrthogonalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
@@ -32,7 +31,9 @@ public class GraphUtils {
         }
     }
 
-    public static final String DEFAULT_CSV_FILE_PATH = props.getProperty("DEFAULT_CSV_FILE_PATH");
+    public static final String _DEFAULT_CSV_FILE_PATH = props.getProperty("DEFAULT_CSV_FILE_PATH");
+    public static final String _SERVER_PORT = props.getProperty("host.name")
+            + ((props.getProperty("host.port") == null || "".equalsIgnoreCase(props.getProperty("host.port").trim())) ? "" : ":" + props.getProperty("host.port"));
 
     public static void displayGraph(Graph<String, DefaultEdge> wordGraph) {
         JFrame frame = new JFrame("Concept net word graph");
@@ -63,7 +64,7 @@ public class GraphUtils {
     }
 
     public static Graph<String, DefaultEdge> importGraph(Graph<String, DefaultEdge> graph) {
-        File graphFile = new File(DEFAULT_CSV_FILE_PATH);
+        File graphFile = new File(_DEFAULT_CSV_FILE_PATH);
         CSVImporter<String, DefaultEdge> graphImporter = new CSVImporter(
                 new VertexProvider() {
                     @Override

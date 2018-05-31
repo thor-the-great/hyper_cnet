@@ -1,5 +1,6 @@
 package contentnet;
 
+import contentnet.graph.GraphUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
@@ -73,36 +74,36 @@ public class ConceptnetAPI {
     }
 
     public JSONObject getHyponyms(String hyponym) {
-        String apiTemplate = "http://api.conceptnet.io/query?node=/c/en/{0}&rel=/r/IsA&end=/c/en/{0}";
-        String apiCall = MessageFormat.format(apiTemplate, hyponym);
+        String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/IsA&end=/c/en/{1}";
+        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, hyponym);
         JSONObject result = genericCall(apiCall);
         return result;
     }
 
     public JSONObject getHypernyms(String hypernym) {
-        String apiTemplate = "http://api.conceptnet.io/query?node=/c/en/{0}&rel=/r/IsA&start=/c/en/{0}";
-        String apiCall = MessageFormat.format(apiTemplate, hypernym);
+        String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/IsA&start=/c/en/{1}";
+        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, hypernym);
         JSONObject result = genericCall(apiCall);
         return result;
     }
 
     public JSONObject getRelationWeight(String mainWord, String wordInQuestion) {
-        String apiTemplate = "http://api.conceptnet.io/related/c/en/{0}?filter=/c/en/{1}";
-        String apiCall = MessageFormat.format(apiTemplate, mainWord, wordInQuestion);
+        String apiTemplate = "http://{0}/related/c/en/{1}?filter=/c/en/{2}";
+        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, mainWord, wordInQuestion);
         JSONObject result = genericCall(apiCall);
         return result;
     }
 
     public JSONObject getRelatedTo(String mainWord) {
-        String apiTemplate = "http://api.conceptnet.io/query?node=/c/en/{0}&rel=/r/RelatedTo&start=/c/en/{0}&end=/c/en";
-        String apiCall = MessageFormat.format(apiTemplate, mainWord);
+        String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/RelatedTo&start=/c/en/{1}&end=/c/en";
+        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, mainWord);
         JSONObject result = genericCall(apiCall);
         return result;
     }
 
     public JSONObject getHasContext(String mainWord) {
-        String apiTemplate = "http://api.conceptnet.io/query?node=/c/en/{0}&rel=/r/HasContext&start=/c/en/{0}&end=/c/en";
-        String apiCall = MessageFormat.format(apiTemplate, mainWord);
+        String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/HasContext&start=/c/en/{1}&end=/c/en";
+        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, mainWord);
         JSONObject result = genericCall(apiCall);
         return result;
     }

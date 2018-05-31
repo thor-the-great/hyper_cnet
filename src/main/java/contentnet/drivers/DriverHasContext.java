@@ -15,7 +15,7 @@ import java.util.*;
 
 public class DriverHasContext {
 
-    static final int MAX_RECUSRSION_LEVEL = 8;
+    static final int MAX_RECUSRSION_LEVEL = 2;
     public static final int DELAY = 950;
     static  final String CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
     static final  boolean IS_LOG_ENABLED = true;
@@ -43,8 +43,9 @@ public class DriverHasContext {
         GraphUtils.printGraph(wordGraph);*/
 
         String[] words = new String[]{
+                "case"
                 //"case", "cable", "mount", "adapter", "book"
-                "case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack"
+                //"case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack"
                 //"filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag"
         };
         for (String word: words ) {
@@ -88,7 +89,7 @@ public class DriverHasContext {
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed: " + (endTime - startTime)/ (1000) + " sec");
 
-        GraphUtils.exportGraph(wordGraph, GraphUtils.DEFAULT_CSV_FILE_PATH);
+        //GraphUtils.exportGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
         GraphUtils.displayGraph(wordGraph);
     }
 
