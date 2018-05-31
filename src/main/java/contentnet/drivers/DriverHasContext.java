@@ -15,7 +15,7 @@ import java.util.*;
 
 public class DriverHasContext {
 
-    static final int MAX_RECUSRSION_LEVEL = 5;
+    static final int MAX_RECUSRSION_LEVEL = 8;
     public static final int DELAY = 950;
     static  final String CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
     static final  boolean IS_LOG_ENABLED = true;
@@ -43,8 +43,8 @@ public class DriverHasContext {
         GraphUtils.printGraph(wordGraph);*/
 
         String[] words = new String[]{
-                "case", "cable", "mount", "adapter", "book"
-                //"case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack"
+                //"case", "cable", "mount", "adapter", "book"
+                "case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack"
                 //"filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag"
         };
         for (String word: words ) {
@@ -140,11 +140,11 @@ public class DriverHasContext {
         //hyperResult.addAll(relatedResult);
 
         //System.out.println("--------------------------------");
-        Map<String, Float> relationWeight = getRelationWeight(word, hyperResult);
+        Map<String, Float> relationWeight = ResultProcessor.getInstance().getRelationWeight(word, hyperResult);
         ResultProcessor.getInstance().processWordsWeights(word, relationWeight, new WeightProcessingDirectRelationStrategy(), IS_LOG_ENABLED);
         //System.out.println("--------------------------------");
         ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, relationWeight);
-        Map<String, Float> farRelationWeight = getRelationWeight(farWord, hyperResult);
+        Map<String, Float> farRelationWeight = ResultProcessor.getInstance().getRelationWeight(farWord, hyperResult);
         ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), IS_LOG_ENABLED);
         Set<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, farRelationWeight);
 
@@ -185,7 +185,7 @@ public class DriverHasContext {
                 //for (int i = filteredWords.size() - 1; i >= 0; i--) {
                 for (String nextRelatedWord: filteredWords) {
                     //String nextRelatedWord = filteredWords.get(i);
-                    Map<String, Float> contextWeight = getRelationWeight(nextRelatedWord, hasContextResults);
+                    Map<String, Float> contextWeight = ResultProcessor.getInstance().getRelationWeight(nextRelatedWord, hasContextResults);
                     ResultProcessor.getInstance().processWordsWeights(nextRelatedWord, contextWeight, new WeightProcessingContextRelationStrategy(), IS_LOG_ENABLED);
                     for (String wordMatchesContext : contextWeight.keySet()) {
                         contextPriorityWords.put(contextWeight.get(wordMatchesContext), nextRelatedWord);
@@ -224,7 +224,7 @@ public class DriverHasContext {
                     ConceptnetAPI.getInstance().getRelatedTo(word), word);
             //relatedToWords = ResultProcessor.getInstance().sanitizeWordList(relatedToWords, ongoingProcessedWords);
 
-            Map<String, Float> relatedToWordsWeight = getRelationWeight(word, relatedToWords);
+            Map<String, Float> relatedToWordsWeight = ResultProcessor.getInstance().getRelationWeight(word, relatedToWords);
             ResultProcessor.getInstance().processWordsWeights(word, relatedToWordsWeight, new WeightProcessingRelatedToStrategy(), IS_LOG_ENABLED);
             ResultProcessor.getInstance().adjustWordsPerWeights(relatedToWords, relatedToWordsWeight);
             //after this we have relateToWords that are postprocessed - no negative weight, first N taken
@@ -263,17 +263,5 @@ public class DriverHasContext {
             filteredWords.addAll(relatedToWords);
         }
         return filteredWords;
-    }
-
-    Map<String, Float> getRelationWeight(String mainWord, Set<String> wordsInQuestion) {
-        Map<String, Float> wordsWeight = new HashMap();
-        for (String wordInQuestion: wordsInQuestion) {
-            float weightResult =
-                    ResultProcessor.getInstance().processRelationWeight(
-                            ConceptnetAPI.getInstance().getRelationWeight(mainWord, Utils.getLabelFromConceptContextName(wordInQuestion)));
-            wordsWeight.put(wordInQuestion, weightResult);
-            Utils.doDelay(DELAY);
-        }
-        return wordsWeight;
     }
 }

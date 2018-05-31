@@ -32,7 +32,7 @@ public class Driver {
     private static int processWords(Graph<String, DefaultEdge> wordGraph, String farWord, String word, int recursionLevel, Set<String> ongoingProcessedWords) {
         if (recursionLevel < MAX_RECUSRSION_LEVEL) {
             recursionLevel++;
-            List<String> relatedWords = processWordsInternally(farWord, word, ongoingProcessedWords);
+            Set<String> relatedWords = processWordsInternally(farWord, word, ongoingProcessedWords);
             if (relatedWords.size() > 0) {
                 for (String relatedWord : relatedWords) {
                     wordGraph.addVertex(relatedWord);
@@ -48,51 +48,51 @@ public class Driver {
         }
     }
 
-    private static List<String> processWordsInternally(String farWord, String word,  Set<String> ongoingProcessedWords) {
-//        System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
-//        List<String> hyperResult =
-//                ResultProcessor.getInstance().processHypernyms(
-//                        ConceptnetAPI.getInstance().getHypernyms(word), word);
-//        hyperResult = ResultProcessor.getInstance().sanitizeWordList(hyperResult, ongoingProcessedWords);
-//
-//        //hyperResult.addAll(relatedResult);
-//
-//        //System.out.println("--------------------------------");
-//        Map<String, Float> relationWeight = getRelationWeight(word, hyperResult);
-//        ResultProcessor.getInstance().processWordsWeights(word, relationWeight, new WeightProcessingDirectRelationStrategy(), false);
-//        System.out.println("--------------------------------");
-//        ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, relationWeight);
-//        Map<String, Float> farRelationWeight = getRelationWeight(farWord, hyperResult);
-//        ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), true);
-//        List<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, farRelationWeight);
-//
-//        /*List<String> relatedResult =
-//                ResultProcessor.getInstance().processHypernyms(
-//                        ConceptnetAPI.getInstance().getRelatedTo(word), word);
-//        relatedResult = ResultProcessor.getInstance().sanitizeWordList(relatedResult, ongoingProcessedWords);
-//        Map<String, Float> weights = getRelationWeight(word, relatedResult);
-//        ResultProcessor.getInstance().processWordsWeights(word, weights, new WeightProcessingDirectRelationStrategy(), false);
-//        System.out.println("--------------------------------");
-//        ResultProcessor.getInstance().adjustWordsPerWeights(relatedResult, weights);
-//        farRelationWeight = getRelationWeight(farWord, relatedResult);
-//        ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), true);
-//        List<String> filteredRelatedWords = ResultProcessor.getInstance().adjustWordsPerWeights(relatedResult, farRelationWeight);
-//
-//        filteredWords.addAll(filteredRelatedWords);*/
+    private static Set<String> processWordsInternally(String farWord, String word,  Set<String> ongoingProcessedWords) {
+        System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
+        Set<String> hyperResult =
+                ResultProcessor.getInstance().processHypernyms(
+                        ConceptnetAPI.getInstance().getHypernyms(word), word);
+        //hyperResult = ResultProcessor.getInstance().sanitizeWordList(hyperResult, ongoingProcessedWords);
 
-//        return filteredWords;
-        return null;
+        //hyperResult.addAll(relatedResult);
+
+        //System.out.println("--------------------------------");
+        Map<String, Float> relationWeight = ResultProcessor.getInstance().getRelationWeight(word, hyperResult);
+        ResultProcessor.getInstance().processWordsWeights(word, relationWeight, new WeightProcessingDirectRelationStrategy(), false);
+        System.out.println("--------------------------------");
+        ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, relationWeight);
+        Map<String, Float> farRelationWeight = ResultProcessor.getInstance().getRelationWeight(farWord, hyperResult);
+        ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), true);
+        Set<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, farRelationWeight);
+
+        /*List<String> relatedResult =
+                ResultProcessor.getInstance().processHypernyms(
+                        ConceptnetAPI.getInstance().getRelatedTo(word), word);
+        relatedResult = ResultProcessor.getInstance().sanitizeWordList(relatedResult, ongoingProcessedWords);
+        Map<String, Float> weights = getRelationWeight(word, relatedResult);
+        ResultProcessor.getInstance().processWordsWeights(word, weights, new WeightProcessingDirectRelationStrategy(), false);
+        System.out.println("--------------------------------");
+        ResultProcessor.getInstance().adjustWordsPerWeights(relatedResult, weights);
+        farRelationWeight = getRelationWeight(farWord, relatedResult);
+        ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), true);
+        List<String> filteredRelatedWords = ResultProcessor.getInstance().adjustWordsPerWeights(relatedResult, farRelationWeight);
+
+        filteredWords.addAll(filteredRelatedWords);*/
+
+        return filteredWords;
+//        return null;
     }
 
-    private static Map<String, Float> getRelationWeight(String mainWord, List<String> wordsInQuestion) {
-        Map<String, Float> wordsWeight = new HashMap();
-        for (String wordInQuestion: wordsInQuestion) {
-            float weightResult =
-                    ResultProcessor.getInstance().processRelationWeight(
-                            ConceptnetAPI.getInstance().getRelationWeight(mainWord, Utils.getLabelFromConceptContextName(wordInQuestion)));
-            wordsWeight.put(wordInQuestion, weightResult);
-            Utils.doDelay(900);
-        }
-        return wordsWeight;
-    }
+//    private static Map<String, Float> getRelationWeight(String mainWord, List<String> wordsInQuestion) {
+//        Map<String, Float> wordsWeight = new HashMap();
+//        for (String wordInQuestion: wordsInQuestion) {
+//            float weightResult =
+//                    ResultProcessor.getInstance().processRelationWeight(
+//                            ConceptnetAPI.getInstance().getRelationWeight(mainWord, Utils.getLabelFromConceptContextName(wordInQuestion)));
+//            wordsWeight.put(wordInQuestion, weightResult);
+//            Utils.doDelay(900);
+//        }
+//        return wordsWeight;
+//    }
 }

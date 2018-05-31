@@ -100,4 +100,16 @@ public class ResultProcessor {
         }
         return words;
     }
+
+    public Map<String, Float> getRelationWeight(String mainWord, Set<String> wordsInQuestion) {
+        Map<String, Float> wordsWeight = new HashMap();
+        for (String wordInQuestion: wordsInQuestion) {
+            float weightResult =
+                    ResultProcessor.getInstance().processRelationWeight(
+                            ConceptnetAPI.getInstance().getRelationWeight(mainWord, Utils.getLabelFromConceptContextName(wordInQuestion)));
+            wordsWeight.put(wordInQuestion, weightResult);
+            Utils.doDelay(Utils.DELAY);
+        }
+        return wordsWeight;
+    }
 }

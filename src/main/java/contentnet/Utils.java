@@ -4,6 +4,8 @@ public class Utils {
 
     static Utils instance;
 
+    public static final int DELAY = 950;
+
     private Utils() {
 
     }
