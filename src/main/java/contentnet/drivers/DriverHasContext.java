@@ -51,7 +51,7 @@ public class DriverHasContext {
         for (String word: words ) {
             if  (!wordGraph.containsVertex(word))
                 wordGraph.addVertex(word);
-            driver.processWords(wordGraph, word, word, 0, ongoingProcessedWords);
+            driver.processWords(wordGraph, word, word, 0);
             //GraphUtils.printGraph(wordGraph);
         }
 
@@ -93,13 +93,13 @@ public class DriverHasContext {
         GraphUtils.displayGraph(wordGraph);
     }
 
-    int processWords(Graph<String, DefaultEdge> wordGraph, String farWord, String word, int recursionLevel, Set<String> ongoingProcessedWords) {
+    int processWords(Graph<String, DefaultEdge> wordGraph, String farWord, String word, int recursionLevel) {
         if (recursionLevel < MAX_RECUSRSION_LEVEL) {
             recursionLevel++;
             boolean isProcessContext = false;
             if (recursionLevel == 1)
                 isProcessContext = true;
-            Set<String> relatedWords = processWordsInternally(farWord, word, ongoingProcessedWords, isProcessContext);
+            Set<String> relatedWords = processWordsInternally(farWord, word, isProcessContext);
             if (relatedWords.size() > 0) {
                 for (String relatedWord : relatedWords) {
                     if (!wordGraph.containsVertex(relatedWord)) {
@@ -110,7 +110,7 @@ public class DriverHasContext {
                         wordGraph.addEdge(relatedWord, word);
                     }
                     Utils.doDelay(DELAY);
-                    processWords(wordGraph, farWord, Utils.getLabelFromConceptContextName(relatedWord), recursionLevel, ongoingProcessedWords);
+                    processWords(wordGraph, farWord, Utils.getLabelFromConceptContextName(relatedWord), recursionLevel);
                 }
             }
             else {
@@ -130,8 +130,7 @@ public class DriverHasContext {
         }
     }
 
-    private Set<String> processWordsInternally(String farWord, String word,  Set<String> ongoingProcessedWords, boolean isProcessInContext) {
-        ongoingProcessedWords.clear();
+    private Set<String> processWordsInternally(String farWord, String word, boolean isProcessInContext) {
         //System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
         Set<String> hyperResult =
                 ResultProcessor.getInstance().processHypernyms(
