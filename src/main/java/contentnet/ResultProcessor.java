@@ -4,10 +4,7 @@ import contentnet.weightprocessing.IResultProcessingStrategy;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ResultProcessor {
     static ResultProcessor instance;
@@ -25,6 +22,8 @@ public class ResultProcessor {
     public List<String> sanitizeWordList(List<String> wordList, Set<String> ongoingProcessedWords) {
         for (int i = wordList.size() - 1; i >= 0; i--) {
             String word = wordList.get(i);
+            //if ("device".equalsIgnoreCase(word))
+            //    System.out.println("remove critical " + word);
             if (ongoingProcessedWords.contains(word)) {
                 //System.out.println("Filtered out word " + word);
                 wordList.remove(i);
@@ -35,8 +34,8 @@ public class ResultProcessor {
         return wordList;
     }
 
-    public List<String> processHypernyms(JSONObject json, String word) {
-        List<String> result = new ArrayList<>();
+    public Set<String> processHypernyms(JSONObject json, String word) {
+        Set<String> result = new HashSet<>();
         JSONArray edges = json.getJSONArray("edges");
         // goes through the edges array
         for (int x = 0; x < edges.length(); x++) {
@@ -86,11 +85,17 @@ public class ResultProcessor {
         return rawResults; 
     }
 
-    public List<String> adjustWordsPerWeights(List<String> words, Map<String, Float> weightResults) {
-        for (int i = words.size() - 1; i >= 0; i--) {
+    public Set<String> adjustWordsPerWeights(Set<String> words, Map<String, Float> weightResults) {
+        /*for (int i = words.size() - 1; i >= 0; i--) {
             String word = words.get(i);
             if (!weightResults.containsKey(word)) {
                 words.remove(i);
+            }
+        }*/
+        for ( Iterator<String> it = words.iterator(); it.hasNext(); ) {
+            String word = it.next();
+            if (!weightResults.containsKey(word)) {
+                it.remove();
             }
         }
         return words;

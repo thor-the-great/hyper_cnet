@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class WeightProcessingRelatedToStrategy implements IResultProcessingStrategy {
 
-    static final int MAX_DIRECT_CONNECTIONS = 10;
+    static final int MAX_DIRECT_CONNECTIONS = 15;
 
     @Override
     public Map<String, Float> processRelationWeights(Map<String, Float> dataToProcess) {

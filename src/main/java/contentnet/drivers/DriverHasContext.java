@@ -16,26 +16,43 @@ import java.util.*;
 public class DriverHasContext {
 
     static final int MAX_RECUSRSION_LEVEL = 5;
-    public static final int DELAY = 850;
+    public static final int DELAY = 950;
     static  final String CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
     static final  boolean IS_LOG_ENABLED = true;
 
     public static void main(String[] args) {
 
+        long startTime = System.currentTimeMillis();
+
         DriverHasContext driver = new DriverHasContext();
 
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        String farWord = "";
-        String word = "";
+
+        //GraphUtils.importGraph(wordGraph);
+        //String farWord = "";
+        //String word = "";
         Set<String> ongoingProcessedWords = new HashSet<>();
-        wordGraph.addVertex(CONCEPT_ROOT_NODE);
+        if (!wordGraph.containsVertex(CONCEPT_ROOT_NODE))
+            wordGraph.addVertex(CONCEPT_ROOT_NODE);
 
 
-        farWord = "case";
+        /*farWord = "case";
         if  (!wordGraph.containsVertex(farWord))
             wordGraph.addVertex(farWord);
         driver.processWords(wordGraph, farWord, farWord, 0, ongoingProcessedWords);
-        //GraphUtils.printGraph(wordGraph);
+        GraphUtils.printGraph(wordGraph);*/
+
+        String[] words = new String[]{
+                "case", "cable", "mount", "adapter", "book"
+                //"case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack"
+                //"filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag"
+        };
+        for (String word: words ) {
+            if  (!wordGraph.containsVertex(word))
+                wordGraph.addVertex(word);
+            driver.processWords(wordGraph, word, word, 0, ongoingProcessedWords);
+            //GraphUtils.printGraph(wordGraph);
+        }
 
         /*farWord = "cable";
         word = "cable";
@@ -68,6 +85,9 @@ public class DriverHasContext {
             GraphUtils.printGraph(wordGraph);
         }*/
 
+        long endTime = System.currentTimeMillis();
+        System.out.println("Time elapsed: " + (endTime - startTime)/ (1000) + " sec");
+
         GraphUtils.exportGraph(wordGraph, GraphUtils.DEFAULT_CSV_FILE_PATH);
         GraphUtils.displayGraph(wordGraph);
     }
@@ -78,7 +98,7 @@ public class DriverHasContext {
             boolean isProcessContext = false;
             if (recursionLevel == 1)
                 isProcessContext = true;
-            List<String> relatedWords = processWordsInternally(farWord, word, ongoingProcessedWords, isProcessContext);
+            Set<String> relatedWords = processWordsInternally(farWord, word, ongoingProcessedWords, isProcessContext);
             if (relatedWords.size() > 0) {
                 for (String relatedWord : relatedWords) {
                     if (!wordGraph.containsVertex(relatedWord)) {
@@ -109,12 +129,13 @@ public class DriverHasContext {
         }
     }
 
-    private List<String> processWordsInternally(String farWord, String word,  Set<String> ongoingProcessedWords, boolean isProcessInContext) {
+    private Set<String> processWordsInternally(String farWord, String word,  Set<String> ongoingProcessedWords, boolean isProcessInContext) {
+        ongoingProcessedWords.clear();
         //System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
-        List<String> hyperResult =
+        Set<String> hyperResult =
                 ResultProcessor.getInstance().processHypernyms(
                         ConceptnetAPI.getInstance().getHypernyms(word), word);
-        hyperResult = ResultProcessor.getInstance().sanitizeWordList(hyperResult, ongoingProcessedWords);
+        //hyperResult = ResultProcessor.getInstance().sanitizeWordList(hyperResult, ongoingProcessedWords);
 
         //hyperResult.addAll(relatedResult);
 
@@ -125,7 +146,7 @@ public class DriverHasContext {
         ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, relationWeight);
         Map<String, Float> farRelationWeight = getRelationWeight(farWord, hyperResult);
         ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), IS_LOG_ENABLED);
-        List<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, farRelationWeight);
+        Set<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, farRelationWeight);
 
         /*List<String> relatedResult =
                 ResultProcessor.getInstance().processHypernyms(
@@ -142,22 +163,29 @@ public class DriverHasContext {
         filteredWords.addAll(filteredRelatedWords);*/
 
         if (isProcessInContext) {
-            List<String> hasContextResuts =
+            Set<String> hasContextResults =
                     ResultProcessor.getInstance().processHypernyms(
                             ConceptnetAPI.getInstance().getHasContext(word), word);
-            for (int i = hasContextResuts.size() - 1; i >= 0; i--) {
-                if (!ConceptnetAPI.ALLOWED_CONTEXT.contains(hasContextResuts.get(i))) {
-                    hasContextResuts.remove(i);
+            /*for (int i = hasContextResults.size() - 1; i >= 0; i--) {
+                if (!ConceptnetAPI.ALLOWED_CONTEXT.contains(hasContextResults.get(i))) {
+                    hasContextResults.remove(i);
+                }
+            }*/
+            for (Iterator<String> it = hasContextResults.iterator(); it.hasNext();) {
+                String hasContextWord = it.next();
+                if (!ConceptnetAPI.ALLOWED_CONTEXT.contains(hasContextWord)) {
+                    it.remove();
                 }
             }
-            if (hasContextResuts.size() > 0 ) {
-            /*for (String contextOf : hasContextResuts) {
+            if (hasContextResults.size() > 0 ) {
+            /*for (String contextOf : hasContextResults) {
                 System.out.println("Context: " + word + " => " + contextOf);
             }*/
                 TreeMap<Float, String> contextPriorityWords = new TreeMap<>();
-                for (int i = filteredWords.size() - 1; i >= 0; i--) {
-                    String nextRelatedWord = filteredWords.get(i);
-                    Map<String, Float> contextWeight = getRelationWeight(nextRelatedWord, hasContextResuts);
+                //for (int i = filteredWords.size() - 1; i >= 0; i--) {
+                for (String nextRelatedWord: filteredWords) {
+                    //String nextRelatedWord = filteredWords.get(i);
+                    Map<String, Float> contextWeight = getRelationWeight(nextRelatedWord, hasContextResults);
                     ResultProcessor.getInstance().processWordsWeights(nextRelatedWord, contextWeight, new WeightProcessingContextRelationStrategy(), IS_LOG_ENABLED);
                     for (String wordMatchesContext : contextWeight.keySet()) {
                         contextPriorityWords.put(contextWeight.get(wordMatchesContext), nextRelatedWord);
@@ -177,68 +205,67 @@ public class DriverHasContext {
                     } else
                         break;
                 }
-                for (int i = filteredWords.size() - 1; i >= 0; i--) {
-                    if (!passedPriorityContextWords.contains(filteredWords.get(i))) {
+                //for (int i = filteredWords.size() - 1; i >= 0; i--) {
+                for ( Iterator<String> it = filteredWords.iterator(); it.hasNext();) {
+                    String filteredWord = it.next();
+                    if (!passedPriorityContextWords.contains(filteredWord)) {
+                    //if (!passedPriorityContextWords.contains(filteredWords.get(i))) {
                         //System.out.println("Word '" + filteredWords.get(i) + "' removed due to context mismatch");
-                        filteredWords.remove(i);
+                        //filteredWords.remove(i);
+                        it.remove();
                     }
                 }
             }
 
             //added relatedTo
-            List<String> relatedWords =
+            Utils.doDelay(DELAY);
+            Set<String> relatedToWords =
                 ResultProcessor.getInstance().processHypernyms(
                     ConceptnetAPI.getInstance().getRelatedTo(word), word);
-            relatedWords = ResultProcessor.getInstance().sanitizeWordList(relatedWords, ongoingProcessedWords);
+            //relatedToWords = ResultProcessor.getInstance().sanitizeWordList(relatedToWords, ongoingProcessedWords);
 
-            Map<String, Float> relatedToWordsWeight = getRelationWeight(word, relatedWords);
+            Map<String, Float> relatedToWordsWeight = getRelationWeight(word, relatedToWords);
             ResultProcessor.getInstance().processWordsWeights(word, relatedToWordsWeight, new WeightProcessingRelatedToStrategy(), IS_LOG_ENABLED);
-            ResultProcessor.getInstance().adjustWordsPerWeights(relatedWords, relatedToWordsWeight);
+            ResultProcessor.getInstance().adjustWordsPerWeights(relatedToWords, relatedToWordsWeight);
+            //after this we have relateToWords that are postprocessed - no negative weight, first N taken
 
             //now search related from the same context as main word
-            if (hasContextResuts.size() > 0 ) {
-            /*for (String contextOf : hasContextResuts) {
+            if (hasContextResults.size() > 0 ) {
+            /*for (String contextOf : hasContextResults) {
                 System.out.println("Context: " + word + " => " + contextOf);
             }*/
-                TreeMap<Float, String> contextPriorityWords = new TreeMap<>();
-                for (int i = relatedWords.size() - 1; i >= 0; i--) {
-                    String nextRelatedToWord = relatedWords.get(i);
-                    //TODO - change relation check to contextOf
-                    Map<String, Float> contextWeight = getRelationWeight(nextRelatedToWord, hasContextResuts);
-                    ResultProcessor.getInstance().processWordsWeights(nextRelatedToWord, contextWeight, new WeightProcessingContextRelationStrategy(), IS_LOG_ENABLED);
-                    for (String wordMatchesContext : contextWeight.keySet()) {
-                        contextPriorityWords.put(contextWeight.get(wordMatchesContext), nextRelatedToWord);
+                for (Iterator<String> it = relatedToWords.iterator(); it.hasNext();) {
+                    String nextRelatedToWord = it.next();
+                //for (int i = relatedToWords.size() - 1; i >= 0; i--) {
+                    //String nextRelatedToWord = relatedToWords.get(i);
+                    Utils.doDelay(DELAY);
+                    Set<String> relatedToWordContexts =
+                            ResultProcessor.getInstance().processHypernyms(
+                                    ConceptnetAPI.getInstance().getHasContext(nextRelatedToWord), nextRelatedToWord);
+                    if (relatedToWordContexts.size() == 0) {
+                        //relatedToWords.remove(i);
+                        it.remove();
+                        continue;
                     }
-
-                /*if (contextWeight.size() == 0) {
-                    filteredWords.remove(i);
-                    System.out.println("Word '" + nextRelatedWord + "' removed due to context mismatch");
-                }*/
-                }
-                int count = 0;
-                List<String> passedPriorityContextWords = new ArrayList<>();
-                for (Float weight : contextPriorityWords.descendingKeySet()) {
-                    if (count < 5) {
-                        passedPriorityContextWords.add(contextPriorityWords.get(weight));
-                        count++;
-                    } else
-                        break;
-                }
-                for (int i = relatedWords.size() - 1; i >= 0; i--) {
-                    if (!passedPriorityContextWords.contains(relatedWords.get(i))) {
-                        //System.out.println("Word '" + filteredWords.get(i) + "' removed due to context mismatch");
-                        relatedWords.remove(i);
+                    boolean isContextMatchFound = false;
+                    for (String mainWordContext : hasContextResults) {
+                        if (relatedToWordContexts.contains(mainWordContext)) {
+                            isContextMatchFound = true;
+                            break;
+                        }
+                    }
+                    if (!isContextMatchFound) {
+                        //relatedToWords.remove(i);
+                        it.remove();
                     }
                 }
             }
-
-            filteredWords.addAll(relatedWords);
-
+            filteredWords.addAll(relatedToWords);
         }
         return filteredWords;
     }
 
-    Map<String, Float> getRelationWeight(String mainWord, List<String> wordsInQuestion) {
+    Map<String, Float> getRelationWeight(String mainWord, Set<String> wordsInQuestion) {
         Map<String, Float> wordsWeight = new HashMap();
         for (String wordInQuestion: wordsInQuestion) {
             float weightResult =
