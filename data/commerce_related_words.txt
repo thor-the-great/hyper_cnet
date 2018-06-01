@@ -1,0 +1,6 @@
+goods,
+item,
+product,
+commodities,
+merchandise,
+possession

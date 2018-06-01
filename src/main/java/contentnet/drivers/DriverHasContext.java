@@ -28,7 +28,7 @@ public class DriverHasContext {
 
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-        //GraphUtils.importGraph(wordGraph);
+        GraphUtils.importGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
         //String farWord = "";
         //String word = "";
         //Set<String> ongoingProcessedWords = new HashSet<>();
@@ -45,15 +45,16 @@ public class DriverHasContext {
         String[] words = new String[]{
                 //"case"
                 //"case", "cable", "mount", "adapter", "book"
-                "case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack",
+                /*"case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack",
                 "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag",
-                "plate", "monitor", "gobo", "bracket", "speaker"
+                "plate", "monitor", "gobo", "bracket", "speaker"*/
+                "box", "card", "strap", "lamp", "riflescope"
         };
         for (String word: words ) {
             if  (!wordGraph.containsVertex(word))
                 wordGraph.addVertex(word);
             driver.processWords(wordGraph, word, word, 0);
-            GraphUtils.printGraph(wordGraph);
+            System.out.println("Finished word : " + word);
         }
 
         /*farWord = "cable";
