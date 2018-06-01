@@ -80,7 +80,7 @@ public class ConceptnetAPI {
         return result;
     }
 
-    public JSONObject getHypernyms(String hypernym) {
+    public JSONObject getIsARelated(String hypernym) {
         String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/IsA&start=/c/en/{1}";
         String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, hypernym);
         JSONObject result = genericCall(apiCall);

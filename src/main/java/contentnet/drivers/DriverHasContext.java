@@ -15,10 +15,10 @@ import java.util.*;
 
 public class DriverHasContext {
 
-    static final int MAX_RECUSRSION_LEVEL = 2;
-    public static final int DELAY = 950;
-    static  final String CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
-    static final  boolean IS_LOG_ENABLED = true;
+    static final int MAX_RECUSRSION_LEVEL = 5;
+    public static final int DELAY = 900;
+
+    static final  boolean IS_LOG_ENABLED = false;
 
     public static void main(String[] args) {
 
@@ -31,9 +31,9 @@ public class DriverHasContext {
         //GraphUtils.importGraph(wordGraph);
         //String farWord = "";
         //String word = "";
-        Set<String> ongoingProcessedWords = new HashSet<>();
-        if (!wordGraph.containsVertex(CONCEPT_ROOT_NODE))
-            wordGraph.addVertex(CONCEPT_ROOT_NODE);
+        //Set<String> ongoingProcessedWords = new HashSet<>();
+        if (!wordGraph.containsVertex(GraphUtils._CONCEPT_ROOT_NODE))
+            wordGraph.addVertex(GraphUtils._CONCEPT_ROOT_NODE);
 
 
         /*farWord = "case";
@@ -43,16 +43,17 @@ public class DriverHasContext {
         GraphUtils.printGraph(wordGraph);*/
 
         String[] words = new String[]{
-                "case"
+                //"case"
                 //"case", "cable", "mount", "adapter", "book"
-                //"case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack"
-                //"filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag"
+                "case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack",
+                "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag",
+                "plate", "monitor", "gobo", "bracket", "speaker"
         };
         for (String word: words ) {
             if  (!wordGraph.containsVertex(word))
                 wordGraph.addVertex(word);
             driver.processWords(wordGraph, word, word, 0);
-            //GraphUtils.printGraph(wordGraph);
+            GraphUtils.printGraph(wordGraph);
         }
 
         /*farWord = "cable";
@@ -89,7 +90,7 @@ public class DriverHasContext {
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed: " + (endTime - startTime)/ (1000) + " sec");
 
-        //GraphUtils.exportGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
+        GraphUtils.exportGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
         GraphUtils.displayGraph(wordGraph);
     }
 
@@ -114,17 +115,17 @@ public class DriverHasContext {
                 }
             }
             else {
-                //wordGraph.addEdge(word, CONCEPT_ROOT_NODE);
-                if (!wordGraph.containsEdge(CONCEPT_ROOT_NODE, word)) {
-                    wordGraph.addEdge(CONCEPT_ROOT_NODE, word);
+                //wordGraph.addEdge(word, _CONCEPT_ROOT_NODE);
+                if (!wordGraph.containsEdge(GraphUtils._CONCEPT_ROOT_NODE, word)) {
+                    wordGraph.addEdge(GraphUtils._CONCEPT_ROOT_NODE, word);
                 }
             }
             return recursionLevel;
         } else {
             //System.out.println("Bottom of recursion reached");
-            //wordGraph.addEdge(word, CONCEPT_ROOT_NODE);
-            if (!wordGraph.containsEdge(CONCEPT_ROOT_NODE, word)) {
-                wordGraph.addEdge(CONCEPT_ROOT_NODE, word);
+            //wordGraph.addEdge(word, _CONCEPT_ROOT_NODE);
+            if (!wordGraph.containsEdge(GraphUtils._CONCEPT_ROOT_NODE, word)) {
+                wordGraph.addEdge(GraphUtils._CONCEPT_ROOT_NODE, word);
             }
             return recursionLevel;
         }
@@ -132,24 +133,27 @@ public class DriverHasContext {
 
     private Set<String> processWordsInternally(String farWord, String word, boolean isProcessInContext) {
         //System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
-        Set<String> hyperResult =
-                ResultProcessor.getInstance().processHypernyms(
-                        ConceptnetAPI.getInstance().getHypernyms(word), word);
+        Set<String> isAWords =
+                ResultProcessor.getInstance().extractEdgeEnds(
+                        ConceptnetAPI.getInstance().getIsARelated(word), word);
         //hyperResult = ResultProcessor.getInstance().sanitizeWordList(hyperResult, ongoingProcessedWords);
 
         //hyperResult.addAll(relatedResult);
 
         //System.out.println("--------------------------------");
-        Map<String, Float> relationWeight = ResultProcessor.getInstance().getRelationWeight(word, hyperResult);
+        Map<String, Float> relationWeight = ResultProcessor.getInstance().getRelationWeight(word, isAWords);
         ResultProcessor.getInstance().processWordsWeights(word, relationWeight, new WeightProcessingDirectRelationStrategy(), IS_LOG_ENABLED);
+        Set<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(isAWords, relationWeight);
         //System.out.println("--------------------------------");
-        ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, relationWeight);
-        Map<String, Float> farRelationWeight = ResultProcessor.getInstance().getRelationWeight(farWord, hyperResult);
-        ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), IS_LOG_ENABLED);
-        Set<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, farRelationWeight);
+        if (!farWord.equalsIgnoreCase(word)) {
+            Map<String, Float> farRelationWeight = ResultProcessor.getInstance().getRelationWeight(farWord, isAWords);
+            ResultProcessor.getInstance().processWordsWeights(word, farRelationWeight, new WeightProcessingFarRelationStrategy(), IS_LOG_ENABLED);
+            //Set<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(isAWords, farRelationWeight);
+            filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(isAWords, farRelationWeight);
+        }
 
         /*List<String> relatedResult =
-                ResultProcessor.getInstance().processHypernyms(
+                ResultProcessor.getInstance().extractEdgeEnds(
                         ConceptnetAPI.getInstance().getRelatedTo(word), word);
         relatedResult = ResultProcessor.getInstance().sanitizeWordList(relatedResult, ongoingProcessedWords);
         Map<String, Float> weights = getRelationWeight(word, relatedResult);
@@ -164,7 +168,7 @@ public class DriverHasContext {
 
         if (isProcessInContext) {
             Set<String> hasContextResults =
-                    ResultProcessor.getInstance().processHypernyms(
+                    ResultProcessor.getInstance().extractEdgeEnds(
                             ConceptnetAPI.getInstance().getHasContext(word), word);
             /*for (int i = hasContextResults.size() - 1; i >= 0; i--) {
                 if (!ConceptnetAPI.ALLOWED_CONTEXT.contains(hasContextResults.get(i))) {
@@ -220,7 +224,7 @@ public class DriverHasContext {
             //added relatedTo
             Utils.doDelay(DELAY);
             Set<String> relatedToWords =
-                ResultProcessor.getInstance().processHypernyms(
+                ResultProcessor.getInstance().extractEdgeEnds(
                     ConceptnetAPI.getInstance().getRelatedTo(word), word);
             //relatedToWords = ResultProcessor.getInstance().sanitizeWordList(relatedToWords, ongoingProcessedWords);
 
@@ -240,7 +244,7 @@ public class DriverHasContext {
                     //String nextRelatedToWord = relatedToWords.get(i);
                     Utils.doDelay(DELAY);
                     Set<String> relatedToWordContexts =
-                            ResultProcessor.getInstance().processHypernyms(
+                            ResultProcessor.getInstance().extractEdgeEnds(
                                     ConceptnetAPI.getInstance().getHasContext(nextRelatedToWord), nextRelatedToWord);
                     if (relatedToWordContexts.size() == 0) {
                         //relatedToWords.remove(i);

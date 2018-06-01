@@ -34,7 +34,7 @@ public class ResultProcessor {
         return wordList;
     }
 
-    public Set<String> processHypernyms(JSONObject json, String word) {
+    public Set<String> extractEdgeEnds(JSONObject json, String word) {
         Set<String> result = new HashSet<>();
         JSONArray edges = json.getJSONArray("edges");
         // goes through the edges array

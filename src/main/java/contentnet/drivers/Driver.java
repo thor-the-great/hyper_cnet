@@ -51,8 +51,8 @@ public class Driver {
     private static Set<String> processWordsInternally(String farWord, String word,  Set<String> ongoingProcessedWords) {
         System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
         Set<String> hyperResult =
-                ResultProcessor.getInstance().processHypernyms(
-                        ConceptnetAPI.getInstance().getHypernyms(word), word);
+                ResultProcessor.getInstance().extractEdgeEnds(
+                        ConceptnetAPI.getInstance().getIsARelated(word), word);
         //hyperResult = ResultProcessor.getInstance().sanitizeWordList(hyperResult, ongoingProcessedWords);
 
         //hyperResult.addAll(relatedResult);
@@ -67,7 +67,7 @@ public class Driver {
         Set<String> filteredWords = ResultProcessor.getInstance().adjustWordsPerWeights(hyperResult, farRelationWeight);
 
         /*List<String> relatedResult =
-                ResultProcessor.getInstance().processHypernyms(
+                ResultProcessor.getInstance().extractEdgeEnds(
                         ConceptnetAPI.getInstance().getRelatedTo(word), word);
         relatedResult = ResultProcessor.getInstance().sanitizeWordList(relatedResult, ongoingProcessedWords);
         Map<String, Float> weights = getRelationWeight(word, relatedResult);

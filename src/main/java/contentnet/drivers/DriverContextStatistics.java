@@ -46,7 +46,7 @@ public class DriverContextStatistics {
             }
             setSize++;
             Set<String> hasContextResuts =
-                    ResultProcessor.getInstance().processHypernyms(
+                    ResultProcessor.getInstance().extractEdgeEnds(
                             ConceptnetAPI.getInstance().getHasContext(word), word);
             if (hasContextResuts.size() == 0) {
                 //System.out.println("Word '" + word + "' has no context");

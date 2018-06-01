@@ -35,6 +35,8 @@ public class GraphUtils {
     public static final String _SERVER_PORT = props.getProperty("host.name")
             + ((props.getProperty("host.port") == null || "".equalsIgnoreCase(props.getProperty("host.port").trim())) ? "" : ":" + props.getProperty("host.port"));
 
+    public static final String _CONCEPT_ROOT_NODE = "CONCEPT_ROOT_NODE";
+
     public static void displayGraph(Graph<String, DefaultEdge> wordGraph) {
         JFrame frame = new JFrame("Concept net word graph");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -63,8 +65,8 @@ public class GraphUtils {
         }
     }
 
-    public static Graph<String, DefaultEdge> importGraph(Graph<String, DefaultEdge> graph) {
-        File graphFile = new File(_DEFAULT_CSV_FILE_PATH);
+    public static Graph<String, DefaultEdge> importGraph(Graph<String, DefaultEdge> graph, String filePath) {
+        File graphFile = new File(filePath);
         CSVImporter<String, DefaultEdge> graphImporter = new CSVImporter(
                 new VertexProvider() {
                     @Override
