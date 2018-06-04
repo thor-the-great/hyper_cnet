@@ -11,7 +11,7 @@ public class DriverGraphImport {
     public static void main (String[] args) {
         DriverGraphImport driver = new DriverGraphImport();
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        GraphUtils.importGraph(wordGraph, "C:\\work\\ariba\\wordGraph - 20 words fixed.csv");
+        GraphUtils.importGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
         GraphUtils.displayGraph(wordGraph);
     }
 }

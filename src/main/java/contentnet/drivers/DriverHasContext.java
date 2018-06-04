@@ -48,7 +48,9 @@ public class DriverHasContext {
                 /*"case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack",
                 "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag",
                 "plate", "monitor", "gobo", "bracket", "speaker"*/
-                "box", "card", "strap", "lamp", "riflescope"
+                //"box", "card", "strap", "lamp", "riflescope",
+                //"module", "paper", "controller", "amplifier", "battery", "headphone", "pedal", "screen", "binocular", "receiver"
+                "transmitter", "tripod", "converter", "ring", "headset", "sleeve", "switch", "keyboard", "charger", "sunglass"
         };
         for (String word: words ) {
             if  (!wordGraph.containsVertex(word))
@@ -92,7 +94,7 @@ public class DriverHasContext {
         System.out.println("Time elapsed: " + (endTime - startTime)/ (1000) + " sec");
 
         GraphUtils.exportGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
-        GraphUtils.displayGraph(wordGraph);
+        //GraphUtils.displayGraph(wordGraph);
     }
 
     int processWords(Graph<String, DefaultEdge> wordGraph, String farWord, String word, int recursionLevel) {
