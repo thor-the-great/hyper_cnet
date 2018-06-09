@@ -19,6 +19,24 @@ public class ResultProcessor {
         return instance;
     }
 
+    public boolean isResultEmptyEdgesEnds(JSONObject json) {
+        boolean result = true;
+        //Set<String> result = new HashSet<>();
+        JSONArray edges = json.getJSONArray("edges");
+        // goes through the edges array
+        for (int x = 0; x < edges.length(); x++) {
+            JSONObject startObj = edges.getJSONObject(x).getJSONObject("end");
+            if (startObj != null) {
+                //String label = startObj.getString("term");
+                //String label = Utils.normalizeCNString(startObj.getString("label"));
+                //if (!label.equalsIgnoreCase(word))
+                    //result.add(label);
+                return false;
+            }
+        }
+        return result;
+    }
+
     public Set<String> extractEdgeEnds(JSONObject json, String word) {
         Set<String> result = new HashSet<>();
         JSONArray edges = json.getJSONArray("edges");
@@ -30,6 +48,24 @@ public class ResultProcessor {
                 String label = Utils.normalizeCNString(startObj.getString("label"));
                 if (!label.equalsIgnoreCase(word))
                     result.add(label);
+            }
+        }
+        return result;
+    }
+
+    public boolean isEdgeEndsInList(JSONObject json, String word, List<String> words) {
+        boolean result = false;
+        //Set<String> result = new HashSet<>();
+        JSONArray edges = json.getJSONArray("edges");
+        // goes through the edges array
+        for (int x = 0; x < edges.length(); x++) {
+            JSONObject startObj = edges.getJSONObject(x).getJSONObject("end");
+            if (startObj != null) {
+                //String label = startObj.getString("term");
+                String label = Utils.normalizeCNString(startObj.getString("label"));
+                if (!label.equalsIgnoreCase(word) && words.contains(label))
+                    //result.add(label);
+                    return true;
             }
         }
         return result;

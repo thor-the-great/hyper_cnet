@@ -59,9 +59,9 @@ public class DriverWordsByCategory {
     };
 
     //static final String[] words = WORDS_SET100;
-    //static final String[] words = WORDS_SET2;
+    static final String[] words = WORDS_SET2;
     //static final String[] words = WORDS_SET100;
-    static final String[] words = WordProvider.getAllProductSemanticWords(500).toArray(new String[0]);
+    //static final String[] words = WordProvider.getAllProductSemanticWords(500).toArray(new String[0]);
     public static final Set<String> UNSPSC_CATEGORY_CONTEXT = new HashSet<String>() {
         {
             //add("unix");
@@ -193,7 +193,7 @@ public class DriverWordsByCategory {
         //System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
         Set<String> isAWords =
                 ResultProcessor.getInstance().extractEdgeEnds(
-                        ConceptnetAPI.getInstance().getIsARelated(word), word);
+                        ConceptnetAPI.getInstance().getIsA(word), word);
 
         //hyperResult.addAll(relatedResult);
 

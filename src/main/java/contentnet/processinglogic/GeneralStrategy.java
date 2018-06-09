@@ -5,7 +5,6 @@ import contentnet.ResultProcessor;
 import contentnet.category.UNSPSCRecord;
 import contentnet.weightprocessing.WeightProcessingDirectRelationStrategy;
 import contentnet.weightprocessing.WeightProcessingFarRelationStrategy;
-import javafx.scene.input.GestureEvent;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,7 +34,7 @@ public class GeneralStrategy implements IStrategy {
         //System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
         Set<String> isAWords =
                 ResultProcessor.getInstance().extractEdgeEnds(
-                        ConceptnetAPI.getInstance().getIsARelated(word), word);
+                        ConceptnetAPI.getInstance().getIsA(word), word);
 
         //hyperResult.addAll(relatedResult);
 

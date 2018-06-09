@@ -52,7 +52,7 @@ public class Driver {
         System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
         Set<String> hyperResult =
                 ResultProcessor.getInstance().extractEdgeEnds(
-                        ConceptnetAPI.getInstance().getIsARelated(word), word);
+                        ConceptnetAPI.getInstance().getIsA(word), word);
         //hyperResult = ResultProcessor.getInstance().sanitizeWordList(hyperResult, ongoingProcessedWords);
 
         //hyperResult.addAll(relatedResult);
