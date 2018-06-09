@@ -1,4 +1,4 @@
-package contentnet.drivers;
+package contentnet.drivers.outdated;
 
 import contentnet.ConceptnetAPI;
 import contentnet.ResultProcessor;
@@ -15,85 +15,66 @@ import java.util.*;
 
 public class DriverHasContext {
 
-    static final int MAX_RECUSRSION_LEVEL = 5;
-    public static final int DELAY = 900;
+    static final int MAX_RECUSRSION_LEVEL = 7;
+    public static final int DELAY = Utils.DELAY;
 
     static final  boolean IS_LOG_ENABLED = false;
 
+    static final String[] WORDS_SET1 = new String[]{
+            "case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack",
+            "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag",
+            "plate", "monitor", "gobo", "bracket", "speaker", "box", "card", "strap", "lamp", "riflescope",
+            "module", "paper", "controller", "amplifier", "battery", "headphone", "pedal", "screen", "binocular", "receiver",
+            "transmitter", "tripod", "converter", "ring", "headset", "sleeve", "switch", "keyboard", "charger", "sunglass"
+    };
+
+    static final String[] WORDS_SET75 = new String[]{
+            "case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack",
+            "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag",
+            "plate", "monitor", "gobo", "bracket", "speaker", "box", "card", "strap", "lamp", "riflescope",
+            "module", "paper", "controller", "amplifier", "battery", "headphone", "pedal", "screen", "binocular", "receiver",
+            "transmitter", "tripod", "converter", "ring", "headset", "sleeve", "switch", "keyboard", "charger", "sunglass",
+            "string", "drive", "holder", "guitar", "connector", "clamp", "library", "knife", "plug",
+            "control", "board", "supply", "film", "rack", "printer", "license", "switcher", "cart", "pack", "extender",
+            "housing", "lectern", "projector", "sight", "interface", "processor", "cartridge", "mixer", "pouch", "protector"
+    };
+
+    static final String[] WORDS_SET2 = new String[]{
+            //"case", "mount"
+            //"mount", "tripod", "microphone"
+            "case"
+    };
+
+    //static final String[] words = WORDS_SET75;
+    static final String[] words = WORDS_SET2;
+
     public static void main(String[] args) {
 
-        long startTime = System.currentTimeMillis();
-
         DriverHasContext driver = new DriverHasContext();
+        driver.doWork();
+    }
+
+    void doWork() {
+        long startTime = System.currentTimeMillis();
 
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-        GraphUtils.importGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
-        //String farWord = "";
-        //String word = "";
-        //Set<String> ongoingProcessedWords = new HashSet<>();
+        //GraphUtils.importGraph(wordGraph, GraphUtils._INWORK_2_CSV_FILE_PATH);
         if (!wordGraph.containsVertex(GraphUtils._CONCEPT_ROOT_NODE))
             wordGraph.addVertex(GraphUtils._CONCEPT_ROOT_NODE);
 
-
-        /*farWord = "case";
-        if  (!wordGraph.containsVertex(farWord))
-            wordGraph.addVertex(farWord);
-        driver.processWords(wordGraph, farWord, farWord, 0, ongoingProcessedWords);
-        GraphUtils.printGraph(wordGraph);*/
-
-        String[] words = new String[]{
-                //"case"
-                //"case", "cable", "mount", "adapter", "book"
-                /*"case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack",
-                "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag",
-                "plate", "monitor", "gobo", "bracket", "speaker"*/
-                //"box", "card", "strap", "lamp", "riflescope",
-                //"module", "paper", "controller", "amplifier", "battery", "headphone", "pedal", "screen", "binocular", "receiver"
-                "transmitter", "tripod", "converter", "ring", "headset", "sleeve", "switch", "keyboard", "charger", "sunglass"
-        };
         for (String word: words ) {
-            if  (!wordGraph.containsVertex(word))
+            if  (!wordGraph.containsVertex(word)) {
                 wordGraph.addVertex(word);
-            driver.processWords(wordGraph, word, word, 0);
-            System.out.println("Finished word : " + word);
+                processWords(wordGraph, word, word, 0);
+            }
+            System.out.println("Processed word : " + word);
         }
-
-        /*farWord = "cable";
-        word = "cable";
-        if (!wordGraph.containsVertex(word))
-            wordGraph.addVertex(word);
-        driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
-        GraphUtils.printGraph(wordGraph);
-
-        farWord = "mount";
-        word = "mount";
-        if (!wordGraph.containsVertex(word))
-            wordGraph.addVertex(word);
-        driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
-        GraphUtils.printGraph(wordGraph);
-
-        //driver.displayGraph(wordGraph);
-
-        GraphUtils.exportGraph(wordGraph, "C:\\work\\ariba\\wordGraph.csv");*/
-
-        //GraphUtils.importGraph(wordGraph);
-
-        /*String[] words = new String[]{
-                "adapter", "book", "camera", "background", "microphone", "dvd", "backpack", "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light"
-        };
-        for (String wordToProcess: words ) {
-            farWord = wordToProcess; word = farWord;
-            if  (!wordGraph.containsVertex(word))
-                wordGraph.addVertex(word);
-            driver.processWords(wordGraph, farWord, word, 0, ongoingProcessedWords);
-            GraphUtils.printGraph(wordGraph);
-        }*/
-
         long endTime = System.currentTimeMillis();
         System.out.println("Time elapsed: " + (endTime - startTime)/ (1000) + " sec");
 
-        GraphUtils.exportGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
+        //GraphUtils.exportGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
+        //GraphUtils.exportGraph(wordGraph, GraphUtils._INWORK_3_CSV_FILE_PATH);
         //GraphUtils.displayGraph(wordGraph);
     }
 

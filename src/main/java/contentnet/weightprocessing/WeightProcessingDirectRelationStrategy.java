@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class WeightProcessingDirectRelationStrategy implements IResultProcessingStrategy {
 
-    static final int MAX_DIRECT_CONNECTIONS = 3;
+    static final int MAX_DIRECT_CONNECTIONS = 10;
 
     @Override
     public Map<String, Float> processRelationWeights(Map<String, Float> dataToProcess) {
@@ -16,7 +16,7 @@ public class WeightProcessingDirectRelationStrategy implements IResultProcessing
         while (keys.hasNext()) {
             String key = keys.next();
             float weightResult = dataToProcess.get(key);
-            if (weightResult <= 0.1f) {
+            if (weightResult <= 0.05f) {
                 keys.remove();
             } else {
                 arrayCount++;

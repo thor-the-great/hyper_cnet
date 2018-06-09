@@ -1,4 +1,4 @@
-package contentnet.drivers;
+package contentnet.drivers.outdated;
 
 import contentnet.*;
 import contentnet.weightprocessing.WeightProcessingDirectRelationStrategy;

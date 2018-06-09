@@ -19,21 +19,6 @@ public class ResultProcessor {
         return instance;
     }
 
-    public List<String> sanitizeWordList(List<String> wordList, Set<String> ongoingProcessedWords) {
-        for (int i = wordList.size() - 1; i >= 0; i--) {
-            String word = wordList.get(i);
-            //if ("device".equalsIgnoreCase(word))
-            //    System.out.println("remove critical " + word);
-            if (ongoingProcessedWords.contains(word)) {
-                //System.out.println("Filtered out word " + word);
-                wordList.remove(i);
-            } else {
-                ongoingProcessedWords.add(word);
-            }
-        }
-        return wordList;
-    }
-
     public Set<String> extractEdgeEnds(JSONObject json, String word) {
         Set<String> result = new HashSet<>();
         JSONArray edges = json.getJSONArray("edges");
@@ -86,12 +71,6 @@ public class ResultProcessor {
     }
 
     public Set<String> adjustWordsPerWeights(Set<String> words, Map<String, Float> weightResults) {
-        /*for (int i = words.size() - 1; i >= 0; i--) {
-            String word = words.get(i);
-            if (!weightResults.containsKey(word)) {
-                words.remove(i);
-            }
-        }*/
         for ( Iterator<String> it = words.iterator(); it.hasNext(); ) {
             String word = it.next();
             if (!weightResults.containsKey(word)) {

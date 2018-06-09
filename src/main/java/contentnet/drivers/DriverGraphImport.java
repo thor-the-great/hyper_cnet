@@ -11,7 +11,8 @@ public class DriverGraphImport {
     public static void main (String[] args) {
         DriverGraphImport driver = new DriverGraphImport();
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        //GraphUtils.importGraph(wordGraph,GraphUtils._INWORK_1_CSV_FILE_PATH);
         GraphUtils.importGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
-        GraphUtils.displayGraph(wordGraph);
+        //GraphUtils.displayGraph(wordGraph);
     }
 }

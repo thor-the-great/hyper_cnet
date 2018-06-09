@@ -16,7 +16,7 @@ public class ConceptnetAPI {
 
     public static final Set<String> ALLOWED_CONTEXT = new HashSet<String>() {
         {
-            add("computing");
+            /*add("computing");
             add("nautical");
             add("chemistry");
             add("medicine");
@@ -33,6 +33,18 @@ public class ConceptnetAPI {
             add("printing");
             add("material");
             add("unit");
+            add("automotive");
+            add("biochemistry");
+            add("firearms");
+            add("textiles");
+            add("television");*/
+
+            //add("unix");
+            //add("microsoft_windows");
+            add("computer");
+            add("computer_hardware");
+            add("software");
+            add("computing");
         }
     };
 
@@ -75,35 +87,51 @@ public class ConceptnetAPI {
 
     public JSONObject getHyponyms(String hyponym) {
         String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/IsA&end=/c/en/{1}";
-        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, hyponym);
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, hyponym);
         JSONObject result = genericCall(apiCall);
         return result;
     }
 
     public JSONObject getIsARelated(String hypernym) {
         String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/IsA&start=/c/en/{1}";
-        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, hypernym);
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, hypernym);
         JSONObject result = genericCall(apiCall);
         return result;
     }
 
     public JSONObject getRelationWeight(String mainWord, String wordInQuestion) {
         String apiTemplate = "http://{0}/related/c/en/{1}?filter=/c/en/{2}";
-        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, mainWord, wordInQuestion);
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, mainWord, wordInQuestion);
         JSONObject result = genericCall(apiCall);
         return result;
     }
 
     public JSONObject getRelatedTo(String mainWord) {
         String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/RelatedTo&start=/c/en/{1}&end=/c/en";
-        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, mainWord);
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, mainWord);
         JSONObject result = genericCall(apiCall);
         return result;
     }
 
     public JSONObject getHasContext(String mainWord) {
         String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/HasContext&start=/c/en/{1}&end=/c/en";
-        String apiCall = MessageFormat.format(apiTemplate, GraphUtils._SERVER_PORT, mainWord);
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, mainWord);
+        JSONObject result = genericCall(apiCall);
+        return result;
+    }
+
+    public JSONObject getHasA(String base, String part) {
+        String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/HasA&end=/c/en/{2}";
+        //String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/HasContext&start=/c/en/{1}&end=/c/en";
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, base, part);
+        JSONObject result = genericCall(apiCall);
+        return result;
+    }
+
+    public JSONObject getAtLocation(String base, String part) {
+        String apiTemplate = "http://{0}/query?node=/c/en/{2}&rel=/r/AtLocation&end=/c/en/{1}";
+        //String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/HasContext&start=/c/en/{1}&end=/c/en";
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, base, part);
         JSONObject result = genericCall(apiCall);
         return result;
     }

@@ -4,7 +4,7 @@ public class Utils {
 
     static Utils instance;
 
-    public static final int DELAY = 950;
+    public static final int DELAY = 0;
 
     private Utils() {
 
@@ -33,10 +33,12 @@ public class Utils {
     }
 
     public static void doDelay(long delay) {
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (delay > 0) {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

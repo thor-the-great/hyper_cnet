@@ -46,6 +46,11 @@
             <version>1.2.0</version>
         </dependency>
         <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-demo</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.jgraphx</groupId>
             <artifactId>jgraphx</artifactId>
             <version>1.2.0</version>
@@ -53,6 +58,11 @@
         <dependency>
             <groupId>com.mxgraph</groupId>
             <artifactId>jgraphx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-io</artifactId>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
 
