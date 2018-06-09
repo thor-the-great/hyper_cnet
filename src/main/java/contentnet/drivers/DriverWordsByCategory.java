@@ -26,7 +26,7 @@ import java.util.*;
 public class DriverWordsByCategory {
 
     static final int MAX_RECUSRSION_LEVEL = 7;
-    public static final int DELAY = Utils.DELAY;
+    static final int DELAY = Utils.DELAY;
 
     static final  boolean IS_LOG_ENABLED = false;
 
@@ -62,8 +62,6 @@ public class DriverWordsByCategory {
     //static final String[] words = WORDS_SET2;
     //static final String[] words = WORDS_SET100;
     static final String[] words = WordProvider.getAllProductSemanticWords(500).toArray(new String[0]);
-    //String unspscCategoryName = "Computers";
-    //String unspscCategory = "432115";
     public static final Set<String> UNSPSC_CATEGORY_CONTEXT = new HashSet<String>() {
         {
             //add("unix");
@@ -76,13 +74,11 @@ public class DriverWordsByCategory {
             add("computer_science");
         }
     };
-
+    IStrategy processingStrategy = new ProductStrategy(IS_LOG_ENABLED);
+    //IStrategy processingStrategy = new GeneralStrategy(IS_LOG_ENABLED);
 
     public static void main(String[] args) {
         DriverWordsByCategory driver = new DriverWordsByCategory();
-        /*Map<String, String> unspscDetails = new HashMap<>();
-        unspscDetails.put(UNSPSCRecord._DETAIL_NAME_CATEGORY, "432115");
-        unspscDetails.put(UNSPSCRecord._DETAIL_NAME_CATEGORY_NAME, "Computers");*/
         UNSPSCRecord category = new UNSPSCRecord();
         category.setUnspsc("432115");
         category.setUnspscName("Computers");
@@ -92,12 +88,10 @@ public class DriverWordsByCategory {
         driver.doWork(words, UNSPSC_CATEGORY_CONTEXT, category);
     }
 
-    //Graph<String, ConceptEdge> doWork(String[] words, Set<String> categoryContext, Map<String, String> unspscDetails) {
     Graph<String, ConceptEdge> doWork(String[] words, Set<String> categoryContext, UNSPSCRecord categoryRecord) {
         return doWork(words, categoryContext, categoryRecord, null);
     }
 
-    //Graph<String, ConceptEdge> doWork(String[] words, Set<String> categoryContext, Map<String, String> unspscDetails, Graph<String, ConceptEdge> wordGraph) {
     Graph<String, ConceptEdge> doWork(String[] words, Set<String> categoryContext, UNSPSCRecord categoryRecord, Graph<String, ConceptEdge> wordGraph) {
         long startTime = System.currentTimeMillis();
 
@@ -118,8 +112,7 @@ public class DriverWordsByCategory {
         }
         //check and remove direct parent of parent node
         List<String> vertexesToRemove = new ArrayList<>();
-        for (Iterator<String> it = wordGraph.vertexSet().iterator(); it.hasNext();) {
-            String vertex = it.next();
+        for (String vertex : wordGraph.vertexSet()) {
             if (wordGraph.outDegreeOf(vertex) == 0 && wordGraph.inDegreeOf(vertex) == 1) {
                 Set<ConceptEdge> edges = wordGraph.incomingEdgesOf(vertex);
                 ConceptEdge edge = edges.iterator().next();
@@ -149,10 +142,8 @@ public class DriverWordsByCategory {
             boolean isLowerTreeLevel = false;
             if (recursionLevel == 1)
                 isLowerTreeLevel = true;
-            //IStrategy processingStrategy = new GeneralStrategy(IS_LOG_ENABLED);
-            IStrategy processingStrategy = new ProductStrategy(IS_LOG_ENABLED);
+
             Set<String> relatedWords = processingStrategy.processWordsInternally(farWord, word, isLowerTreeLevel, categoryContext, categoryRecord);
-            //Set<String> relatedWords = processWordsInternally(farWord, word, isLowerTreeLevel, categoryContext, unspscDetails);
             if (relatedWords.size() > 0) {
                 for (String relatedWord : relatedWords) {
                     if (!wordGraph.containsVertex(relatedWord)) {
