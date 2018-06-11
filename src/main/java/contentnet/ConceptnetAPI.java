@@ -2,6 +2,7 @@ package contentnet;
 
 import contentnet.graph.GraphUtils;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -47,6 +48,8 @@ public class ConceptnetAPI {
             add("computing");
         }
     };
+
+    static ResultProcessor resultProcessor = ResultProcessor.getInstance();
 
     static ConceptnetAPI instance;
 
@@ -99,6 +102,13 @@ public class ConceptnetAPI {
         return result;
     }
 
+    public JSONObject getIsAForTwoWords(String hyponym, String hypernym) {
+        String apiTemplate = "http://{0}/query?node=/c/en/{1}&rel=/r/IsA&start=/c/en/{2}";
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, hyponym, hypernym);
+        JSONObject result = genericCall(apiCall);
+        return result;
+    }
+
     public JSONObject getRelationWeight(String mainWord, String wordInQuestion) {
         String apiTemplate = "http://{0}/related/c/en/{1}?filter=/c/en/{2}";
         String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, mainWord, wordInQuestion);
@@ -134,5 +144,13 @@ public class ConceptnetAPI {
         String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, base, part);
         JSONObject result = genericCall(apiCall);
         return result;
+    }
+
+    public boolean isValidWord(String word) {
+        String apiTemplate = "http://{0}/c/en/{1}";
+        String apiCall = MessageFormat.format(apiTemplate, GlobalProperties._SERVER_PORT, word);
+        JSONObject result = genericCall(apiCall);
+        //return resultProcessor.isResultEmptyEdgesEnds(result);
+        return (result.getJSONArray("edges").length() > 0);
     }
 }

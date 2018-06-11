@@ -55,13 +55,15 @@ public class DriverWordsByCategory {
             //"case", "mount"
             //"mount", "tripod", "microphone"
             //"ipad"
-            "background", "notebook", "server", "interface", "string", "keyboard", "monitor", "player", "cap", "connector", "dvd", "cover", "software"
+            //"background", "notebook", "server", "interface", "string", "keyboard", "monitor", "player", "cap",
+            //"connector", "dvd", "cover", "software"
+            "tablet"
     };
 
     //static final String[] words = WORDS_SET100;
-    static final String[] words = WORDS_SET2;
+    //static final String[] words = WORDS_SET2;
     //static final String[] words = WORDS_SET100;
-    //static final String[] words = WordProvider.getAllProductSemanticWords(500).toArray(new String[0]);
+    static final String[] words = WordProvider.getAllProductSemanticWords(200).toArray(new String[0]);
     public static final Set<String> UNSPSC_CATEGORY_CONTEXT = new HashSet<String>() {
         {
             //add("unix");
@@ -72,6 +74,8 @@ public class DriverWordsByCategory {
             add("computing");
 
             add("computer_science");
+            add("mail");
+            add("computer_switch_box");
         }
     };
     IStrategy processingStrategy = new ProductStrategy(IS_LOG_ENABLED);
@@ -82,9 +86,40 @@ public class DriverWordsByCategory {
         UNSPSCRecord category = new UNSPSCRecord();
         category.setUnspsc("432115");
         category.setUnspscName("Computers");
+
+        /*List<String> attributes = new ArrayList<>();
+        attributes.add("computer");
+        category.getAttributes().put(UNSPSCRecord._ATTR_NAME_ATTRVALUE, attributes);
+
+        List<String> products = new ArrayList<>();
+        products.add("notebook");
+        category.getAttributes().put(UNSPSCRecord._ATTR_NAME_PRODUCT, products);*/
+
+        //List<String> attributes = new ArrayList<>();
+        //attributes.add("computer");
+        //category.getAttributes().put(UNSPSCRecord._ATTR_NAME_ATTRVALUE, attributes);
+
+        /*List<String> products = new ArrayList<>();
+        products.add("computer");
+        category.getAttributes().put(UNSPSCRecord._ATTR_NAME_PRODUCT, products);*/
+
+        /*List<String> attributes = new ArrayList<>();
+        attributes.add("computer");
+        category.getAttributes().put(UNSPSCRecord._ATTR_NAME_ATTRVALUE, attributes);
+
+        List<String> products = new ArrayList<>();
+        products.add("server");
+        category.getAttributes().put(UNSPSCRecord._ATTR_NAME_PRODUCT, products);*/
+
         List<String> attributes = new ArrayList<>();
         attributes.add("computer");
-        category.getAttributes().put(UNSPSCRecord._ATTR_NAME_PRODUCT, attributes);
+        attributes.add("box");
+        category.getAttributes().put(UNSPSCRecord._ATTR_NAME_ATTRVALUE, attributes);
+
+        List<String> products = new ArrayList<>();
+        products.add("box");
+        category.getAttributes().put(UNSPSCRecord._ATTR_NAME_PRODUCT, products);
+
         driver.doWork(words, UNSPSC_CATEGORY_CONTEXT, category);
     }
 

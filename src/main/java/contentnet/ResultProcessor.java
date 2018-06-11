@@ -20,20 +20,17 @@ public class ResultProcessor {
     }
 
     public boolean isResultEmptyEdgesEnds(JSONObject json) {
-        boolean result = true;
+        //boolean result = true;
         //Set<String> result = new HashSet<>();
-        JSONArray edges = json.getJSONArray("edges");
+        /*JSONArray edges = json.getJSONArray("edges");
         // goes through the edges array
         for (int x = 0; x < edges.length(); x++) {
             JSONObject startObj = edges.getJSONObject(x).getJSONObject("end");
             if (startObj != null) {
-                //String label = startObj.getString("term");
-                //String label = Utils.normalizeCNString(startObj.getString("label"));
-                //if (!label.equalsIgnoreCase(word))
-                    //result.add(label);
                 return false;
             }
-        }
+        }*/
+        boolean result = json.getJSONArray("edges").length() == 0;
         return result;
     }
 

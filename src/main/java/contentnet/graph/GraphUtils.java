@@ -53,7 +53,8 @@ public class GraphUtils {
 
     public static void displayGraph(Graph<String, ConceptEdge> wordGraph, String title) {
         JFrame frame = new JFrame(title == null ? "Concept net word graph" : title);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JGraphXAdapter<String, ConceptEdge> graphAdapter = new JGraphXAdapter<>(wordGraph);
 

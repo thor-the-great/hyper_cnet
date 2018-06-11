@@ -21,12 +21,14 @@ public class ProductStrategy implements IStrategy {
     public Set<String> processWordsInternally(String farWord, String word, boolean isLowerTreeLevel, Set<String> categoryContext, UNSPSCRecord category) {
         Set<String> isAWords = null;
         if (isLowerTreeLevel) {
+            //checking for parts - if processing word is part of the main word
             List<String> possibleProducts =  category.getAttributes().get(UNSPSCRecord._ATTR_NAME_PRODUCT);
             List<String> possibleAttribute =  category.getAttributes().get(UNSPSCRecord._ATTR_NAME_ATTRVALUE);
             boolean foundAtLeastOneMatch = isPartConnectedToBase(word, possibleProducts, false);
             if (!foundAtLeastOneMatch) {
                 foundAtLeastOneMatch = isPartConnectedToBase(word, possibleAttribute, foundAtLeastOneMatch);
             }
+            //checking if word isA main word
             if (!foundAtLeastOneMatch) {
                 isAWords =
                         getInstance().extractEdgeEnds(
@@ -43,7 +45,27 @@ public class ProductStrategy implements IStrategy {
                         }
                     }
                 }
-
+            }
+            //checking complex terms
+            if (!foundAtLeastOneMatch) {
+                if (possibleProducts != null) {
+                    for (String possibleProduct : possibleProducts) {
+                        String newTerm = possibleProduct + "_" + word;
+                        if (ConceptnetAPI.getInstance().isValidWord(newTerm)) {
+                            foundAtLeastOneMatch = true;
+                            break;
+                        }
+                    }
+                }
+                if (possibleAttribute != null) {
+                    for (String possibleProduct : possibleAttribute) {
+                        String newTerm = possibleProduct + "_" + word;
+                        if (ConceptnetAPI.getInstance().isValidWord(newTerm)) {
+                            foundAtLeastOneMatch = true;
+                            break;
+                        }
+                    }
+                }
             }
             if (!foundAtLeastOneMatch)
                 return new HashSet<>();
@@ -61,9 +83,10 @@ public class ProductStrategy implements IStrategy {
 
         //System.out.println("processing word '" + word + "' in context of far word '" + farWord + "'");
         if (isAWords == null)
-        isAWords =
-                getInstance().extractEdgeEnds(
-                        ConceptnetAPI.getInstance().getIsA(word), word);
+            isAWords =
+        //Set<String> isAWords =
+                    getInstance().extractEdgeEnds(
+                            ConceptnetAPI.getInstance().getIsA(word), word);
 
         //hyperResult.addAll(relatedResult);
 
