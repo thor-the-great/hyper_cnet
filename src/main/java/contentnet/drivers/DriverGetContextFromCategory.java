@@ -100,7 +100,7 @@ public class DriverGetContextFromCategory {
                 Set<String> contextOfOneAttribute = new HashSet<>();
                 for (String word : relationWeights.keySet()) {
                     float relationWeight = relationWeights.get(word);
-                    if (relationWeight > 0.33) {
+                    if (relationWeight > 0.35) {
                         System.out.println(word + " context, weight " + relationWeights.get(word) + " for category " + record.getUnspscName());
                         //record.getCategoryContext().add(word);
                         contextOfOneAttribute.add(word);

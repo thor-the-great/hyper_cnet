@@ -16,8 +16,8 @@ public class DriverGraphImport {
         //GraphUtils.importGraph(wordGraph,GraphUtils._INWORK_1_CSV_FILE_PATH);
         //GraphUtils.importGraph(wordGraph, GraphUtils._DEFAULT_CSV_FILE_PATH);
         ConceptGraphCSVImporterSimple graphImporter = new ConceptGraphCSVImporterSimple();
-        graphImporter.importGraph(wordGraph, "C:\\work\\ariba\\export_test.csv");
+        graphImporter.importGraph(wordGraph, "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\wordGraph_43211601_.csv");
         GraphUtils.displayGraph(wordGraph);
-        GraphUtils.exportGraph("C:\\work\\ariba\\export_test_expr.csv", wordGraph);
+        //GraphUtils.exportGraph("C:\\work\\ariba\\export_test_expr.csv", wordGraph);
     }
 }

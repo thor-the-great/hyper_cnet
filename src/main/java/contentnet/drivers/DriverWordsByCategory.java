@@ -38,7 +38,7 @@ public class DriverWordsByCategory {
             "transmitter", "tripod", "converter", "ring", "headset", "sleeve", "switch", "keyboard", "charger", "sunglass"
     };
 
-    static final String[] WORDS_SET100 = new String[]{
+    static final String[] WORDS_SET200 = new String[]{
             "case", "cable", "mount", "adapter", "book", "camera", "background", "microphone", "dvd", "backpack",
             "filter", "lens", "other", "stand", "cover", "software", "panel", "download", "light", "bag",
             "plate", "monitor", "gobo", "bracket", "speaker", "box", "card", "strap", "lamp", "riflescope",
@@ -49,6 +49,17 @@ public class DriverWordsByCategory {
             "housing", "lectern", "projector", "sight", "interface", "processor", "cartridge", "mixer", "pouch", "protector",
             "upgrade", "display", "clip", "arm", "support", "unsure",  "base", "station", "head", "bundle",
             "cap", "telescope", "windscreen", "audio", "enclosure", "transceiver", "loudspeaker", "antenna", "roll", "player"
+            ,
+            "balm", "warp", "harddrive", "ringsight", "skateboard", "adr", "guitarist", "cablecaster", "mudbox", "searchlight",
+            "cabinbag", "thesy", "corel", "replacer", "phenomenon", "casing", "monitorguard", "winzip", "saturator", "multimaximizer",
+            "webplus", "resynthesis", "cartoonr", "tracktion", "bloc", "singing", "clickshop", "scooter", "translucence",  "powerkit",
+            "magnifying", "xylo", "desertsuit", "aircase", "pluraleye", "rocker", "flexibellow", "survey", "lightbender", "quizcreator",
+            "unicase", "supersampler", "nugen", "derechoe", "vpn", "anamorphot", "channelstrip", "keyer", "fastcut", "hardigg", "michron",
+            "naturallyspeak", "tunebite", "pianocentric", "graydome", "microsdhc", "groundglass", "pochette", "microspud", "scorecleaner",
+            "disguise", "podpack", "vitascene", "renaissance", "noisefree", "algorithm", "alligator", "positioning", "spectrascope", "litepanelbag",
+            "binopod", "plotter", "unveil", "radar", "streetomatic", "brad", "echospace", "reality", "nametag", "stencil", "binopack", "noisemaker",
+            "journalist", "parachute", "inphase", "cellist", "moviestreamer", "thepetebox", "spitfire", "globalsan", "varicam", "chesty", "multibox",
+            "efex", "puck", "clic", "recharge", "waistpack", "downloadable", "minimount"
     };
 
     static final String[] WORDS_SET2 = new String[]{
@@ -63,7 +74,8 @@ public class DriverWordsByCategory {
     //static final String[] words = WORDS_SET100;
     //static final String[] words = WORDS_SET2;
     //static final String[] words = WORDS_SET100;
-    static final String[] words = WordProvider.getAllProductSemanticWords(200).toArray(new String[0]);
+    //static final String[] words = WORDS_SET200;
+    static final String[] words = WordProvider.getAllProductSemanticWords(500).toArray(new String[0]);
     public static final Set<String> UNSPSC_CATEGORY_CONTEXT = new HashSet<String>() {
         {
             //add("unix");
@@ -73,9 +85,14 @@ public class DriverWordsByCategory {
             add("software");
             add("computing");
 
-            add("computer_science");
-            add("mail");
+            //add("computer_science");
+            //add("mail");
             add("computer_switch_box");
+            /*add("printing");
+            add("typewriters");
+            add("machine");
+            add("typesetting");
+            add("paper");*/
         }
     };
     IStrategy processingStrategy = new ProductStrategy(IS_LOG_ENABLED);
@@ -84,8 +101,8 @@ public class DriverWordsByCategory {
     public static void main(String[] args) {
         DriverWordsByCategory driver = new DriverWordsByCategory();
         UNSPSCRecord category = new UNSPSCRecord();
-        category.setUnspsc("432115");
-        category.setUnspscName("Computers");
+        category.setUnspsc("432121");
+        category.setUnspscName("Computer printers");
 
         /*List<String> attributes = new ArrayList<>();
         attributes.add("computer");
@@ -113,11 +130,14 @@ public class DriverWordsByCategory {
 
         List<String> attributes = new ArrayList<>();
         attributes.add("computer");
-        attributes.add("box");
+        //attributes.add("switch");
+        //attributes.add("box");
         category.getAttributes().put(UNSPSCRecord._ATTR_NAME_ATTRVALUE, attributes);
 
         List<String> products = new ArrayList<>();
-        products.add("box");
+        products.add("printer");
+        //products.add("computer");
+        //products.add("box");
         category.getAttributes().put(UNSPSCRecord._ATTR_NAME_PRODUCT, products);
 
         driver.doWork(words, UNSPSC_CATEGORY_CONTEXT, category);
@@ -168,6 +188,7 @@ public class DriverWordsByCategory {
         //GraphUtils.exportGraph("C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\wordGraph_100_words_in_work.csv", wordGraph);
         //GraphUtils.printGraphNew(wordGraph);
         GraphUtils.displayGraph(wordGraph);
+        GraphUtils.exportGraph("C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\wordGraph_" + categoryRecord.getUnspsc() + "_" + ".csv", wordGraph);
         return wordGraph;
     }
 

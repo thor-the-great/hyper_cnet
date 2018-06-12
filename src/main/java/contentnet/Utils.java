@@ -1,5 +1,7 @@
 package contentnet;
 
+import contentnet.category.UNSPSCRecord;
+
 public class Utils {
 
     static Utils instance;
@@ -40,5 +42,9 @@ public class Utils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static String formatFileName(String incomeFileName, UNSPSCRecord category) {
+        return "";
     }
 }
