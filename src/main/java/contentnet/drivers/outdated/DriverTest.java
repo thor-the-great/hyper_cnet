@@ -1,0 +1,382 @@
+package contentnet.drivers.outdated;
+
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxResources;
+import com.mxgraph.view.mxGraphView;
+import contentnet.NltkAPI;
+import contentnet.drivers.DriverGraphEditor;
+import contentnet.graph.ConceptEdge;
+import contentnet.graph.GraphUtils;
+import org.jgrapht.Graph;
+import org.jgrapht.ListenableGraph;
+import org.jgrapht.event.GraphVertexChangeEvent;
+import org.jgrapht.ext.JGraphXAdapter;
+import org.jgrapht.graph.DefaultListenableGraph;
+import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.io.CSVFormat;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Stream;
+
+/**
+ * Testing different java approaches, not relevant for any functions
+ */
+public class DriverTest {
+
+    String workDir = "";
+    JFrame frame;
+
+    void doWork() {
+        Graph<String, ConceptEdge> wordGraph = new DirectedMultigraph<>(ConceptEdge.class);
+        String fileName = "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\chunks\\interim_copies\\wordGraph_43211608_inwork.csv.proc";
+        GraphUtils.importGraphMatrix(wordGraph, fileName);
+        ListenableGraph<String, ConceptEdge> lGraph = new DefaultListenableGraph(wordGraph);
+        frame = new JFrame("Concept net word graph");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        String category = "", categoryName = "";
+
+        JGraphXAdapter<String, ConceptEdge> graphAdapter = new JGraphXAdapter<>(lGraph);
+
+        //mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter);
+        mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter);
+        layout.execute(graphAdapter.getDefaultParent());
+
+        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
+        mxGraphView view =graphAdapter.getView();
+        view.setScale(2.5f);
+
+        List<String> selectedVertexes = new ArrayList<>();
+        List<ConceptEdge> selectedEdges = new ArrayList<>();
+
+        DefaultListModel listModel = new DefaultListModel();
+        JList commandList = new JList(listModel); //data has type Object[]
+        commandList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        commandList.setModel(listModel);
+
+        JSplitPane inner = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                graphComponent, commandList);
+        inner.setDividerLocation(1200);
+
+        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                mxCell cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
+                if (cell != null && cell.isVertex()) {
+                    System.out.println(cell.getValue());
+                    selectedVertexes.add(cell.getValue().toString());
+                    listModel.addElement(cell.getValue().toString());
+                }
+                else if (cell != null && cell.isEdge()) {
+                    System.out.println(cell.getValue());
+                    ConceptEdge edge = (ConceptEdge) cell.getValue();
+                    selectedEdges.add(edge);
+                    String selectionString = edge.getSource() + " -> " + edge.getTarget() + " " + edge.getRelationType();
+                    listModel.addElement(selectionString);
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+                super.mouseClicked(mouseEvent);
+            }
+        });
+
+        JPanel  buttonsPane = new JPanel(new FlowLayout());
+
+        JButton addHypEdgeButton = new JButton("Add hypernym edge");
+        addHypEdgeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Add edge hypernym");
+                if (selectedVertexes.size() != 2) {
+                    JOptionPane.showMessageDialog(null, "Two vertexes must be selected", "Can't create edge", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String sourceVertex = selectedVertexes.get(0);
+                String destinationVertex = selectedVertexes.get(1);
+
+                String[] categoryInfo = GraphUtils.getGraphCategoryInfo(lGraph);
+
+                ConceptEdge newEdge = new ConceptEdge(ConceptEdge._RELATION_TYPE_HYPERNYM, categoryInfo[0], categoryInfo[1]);
+                newEdge.setEdgeSourceDestination(sourceVertex, destinationVertex);
+                graphAdapter.getModel().beginUpdate();
+                lGraph.addEdge(sourceVertex, destinationVertex, newEdge);
+                graphAdapter.getModel().endUpdate();
+                selectedVertexes.clear();
+                listModel.removeAllElements();
+            }
+        });
+
+        JButton addVertexButton = new JButton("Add vertex");
+        addVertexButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Add new vertex");
+                String vertex = (String)JOptionPane.showInputDialog(
+                        null,
+                        "Enter vertex: ",
+                        "Create vertex",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        null,
+                        "vertex");
+                if (vertex == null || "".equals(vertex.trim())) {
+                    JOptionPane.showMessageDialog(null, "Enter non-empty name of the vertex", "Can't create vertex", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                graphAdapter.getModel().beginUpdate();
+                lGraph.addVertex(vertex);
+                graphAdapter.getModel().endUpdate();
+            }
+        });
+
+        JButton deleteVertexes = new JButton("Delete vertex");
+        deleteVertexes.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Delete vertexes");
+                graphAdapter.getModel().beginUpdate();
+                for (String selectedVertex: selectedVertexes) {
+                    System.out.println(selectedVertex);
+                    lGraph.removeVertex(selectedVertex);
+                }
+                graphAdapter.getModel().endUpdate();
+                listModel.removeAllElements();
+                selectedVertexes.clear();
+                graphAdapter.repaint();
+            }
+        });
+
+        JButton deleteVertexesWSyn = new JButton("Delete vertex with nested syns");
+        deleteVertexesWSyn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Delete vertexes");
+                graphAdapter.getModel().beginUpdate();
+                for (String selectedVertex: selectedVertexes) {
+                    System.out.println(selectedVertex);
+                    DriverGraphEditor.removeVertexWithNestedSynonyms(lGraph, selectedVertex);
+                }
+                selectedVertexes.clear();
+                listModel.removeAllElements();
+                graphAdapter.getModel().endUpdate();
+                graphAdapter.repaint();
+            }
+        });
+
+        JButton deleteEdges = new JButton("Delete edges");
+        deleteEdges.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Delete edges");
+                graphAdapter.getModel().beginUpdate();
+                for (ConceptEdge selectedEdge: selectedEdges) {
+                    System.out.println(selectedEdge);
+                    lGraph.removeEdge(selectedEdge);
+                }
+                selectedEdges.clear();
+                listModel.removeAllElements();
+                graphAdapter.getModel().endUpdate();
+                graphAdapter.repaint();
+            }
+        });
+
+        JButton loadNewGraphButton = new JButton("Load graph");
+
+        MouseAdapter handler = new LoadGraphHandler(graphAdapter, wordGraph, lGraph);
+
+        loadNewGraphButton.addMouseListener(handler);
+
+        JButton clearSelectionButton = new JButton("Clear all selections");
+        clearSelectionButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Clear selection");
+                selectedVertexes.clear();
+                selectedEdges.clear();
+                listModel.removeAllElements();
+            }
+        });
+
+        JButton reloadGraphButton = new JButton("Refresh");
+        reloadGraphButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Refresh");
+                mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter);
+                layout.execute(graphAdapter.getDefaultParent());
+            }
+        });
+
+        JButton save = new JButton("Save");
+        save.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Save");
+                if (workDir.equals(""))
+                    workDir = workDir.equalsIgnoreCase("") ? System.getProperty("user.dir") : workDir;
+                JFileChooser fc = new JFileChooser(workDir);
+                int rc = fc.showDialog(null, mxResources.get("save"));
+                String exportFilename = fc.getSelectedFile().getAbsolutePath();
+                if (new File(exportFilename).exists()
+                        && JOptionPane.showConfirmDialog(graphComponent,"Overwrite existing file?") != JOptionPane.YES_OPTION)
+                {
+                    return;
+                }
+                else {
+                    GraphUtils.exportGraph(exportFilename + ".edit", lGraph, CSVFormat.MATRIX);
+                }
+                //
+            }
+        });
+
+        buttonsPane.add(loadNewGraphButton);
+        buttonsPane.add(addHypEdgeButton);
+        buttonsPane.add(addVertexButton);
+        buttonsPane.add(deleteVertexes);
+        buttonsPane.add(deleteVertexesWSyn);
+        buttonsPane.add(deleteEdges);
+        buttonsPane.add(clearSelectionButton);
+        buttonsPane.add(reloadGraphButton);
+        buttonsPane.add(save);
+        JSplitPane outer = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                inner, buttonsPane);
+        outer.setDividerLocation(360);
+        outer.setResizeWeight(1);
+        outer.setDividerSize(5);
+        outer.setBorder(null);
+
+
+        //frame.add(graphComponent);
+        frame.add(outer);
+
+        frame.pack();
+        frame.setLocationByPlatform(true);
+        frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        //reads folder and filter file names as per pattern, put those filtered names as strings to the list
+        /*String hwByCategoriesExportFolder = "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\data\\";
+        List<String> processedCategories = new ArrayList<>();
+        try(Stream<Path> filePaths = Files.walk(Paths.get(hwByCategoriesExportFolder))) {
+            filePaths.filter(Files::isRegularFile).
+                    filter(filePath -> filePath.getFileName().toString().startsWith("hwByCategory") && filePath.getFileName().toString().endsWith("txt")).
+                    forEach(filePath -> processedCategories.add(filePath.getFileName().toString().split("_")[1]));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        processedCategories.forEach(System.out::println);*/
+
+        /*String[] params = new String[4];
+        params[0] = "C:\\dev\\python\\anaconda\\envs\\wordnet_nltk\\python.exe";
+        params[1] = "C:\\work\\ariba\\wordnet_nltk\\wn_test1.py";
+        params[2] = "lcd";
+        params[3] = "computer_display";
+
+        try {
+            Process pythonScriptProcess = Runtime.getRuntime().exec(params);
+            BufferedReader br = new BufferedReader(new InputStreamReader(pythonScriptProcess.getInputStream()));
+            String scriptOutput = br.readLine();
+            System.out.println(scriptOutput);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        /*List<String> result = NltkAPI.getInstance().getLowestCommonHypernyms("touchscreen", "computer_display");
+        result.forEach(System.out::println);*/
+
+        DriverTest driver = new DriverTest();
+        driver.doWork();
+    }
+
+
+    class LoadGraphHandler extends MouseAdapter {
+
+        JGraphXAdapter<String, ConceptEdge> graphAdapter;
+        Graph<String, ConceptEdge> wordGraph;
+        ListenableGraph<String, ConceptEdge> lGraph;
+
+        LoadGraphHandler(JGraphXAdapter<String, ConceptEdge> graphAdapter, Graph<String, ConceptEdge> wordGraph, ListenableGraph<String, ConceptEdge> lGraph) {
+            this.graphAdapter = graphAdapter;
+            this.wordGraph = wordGraph;
+            this.lGraph = lGraph;
+        }
+
+        public void mouseClicked(MouseEvent mouseEvent) {
+            System.out.println("Load graph");
+            workDir = workDir.equalsIgnoreCase("") ? System.getProperty("user.dir") : workDir;
+            JFileChooser fc = new JFileChooser(workDir);
+            int rc = fc.showDialog(null, "Load graph");
+            String selectedFilePath = fc.getSelectedFile().getAbsolutePath();
+            workDir = fc.getSelectedFile().getParent();
+            graphAdapter.getModel().beginUpdate();
+            wordGraph = new DirectedMultigraph<>(ConceptEdge.class);
+            GraphUtils.importGraphMatrix(wordGraph, selectedFilePath);
+            //
+            //lGraph = new DefaultListenableGraph<>(wordGraph);
+            Set<String> vertexes = new HashSet<>();
+            for (Iterator<String> it = lGraph.vertexSet().iterator(); it.hasNext();) {
+                vertexes.add(it.next());
+            }
+            for (String vertex : vertexes) {
+                lGraph.removeVertex(vertex);
+            }
+            System.out.println(lGraph.vertexSet());
+
+            String category = "", categoryName = "";
+            boolean isCategoryInfoInitialized = false;
+            for (String vertex: wordGraph.vertexSet()) {
+                if (!lGraph.containsVertex(vertex)) {
+                    lGraph.addVertex(vertex);
+                }
+
+                Set<ConceptEdge> outEdges = wordGraph.outgoingEdgesOf(vertex);
+                for (ConceptEdge edge : outEdges) {
+                    String targetV = edge.getTarget();
+                    if (!lGraph.containsVertex(targetV))
+                        lGraph.addVertex(targetV);
+                    ConceptEdge clonedEdge = (ConceptEdge) edge.clone();
+                    if (!isCategoryInfoInitialized && !ConceptEdge._RELATION_TYPE_GENERIC.equals(clonedEdge.getRelationType())) {
+                        category = (String) clonedEdge.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY);
+                        categoryName = (String) clonedEdge.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY_NAME);
+                        isCategoryInfoInitialized = true;
+                    }
+                    lGraph.addEdge(vertex, targetV, clonedEdge);
+                }
+            }
+
+            System.out.println(lGraph.vertexSet());
+
+            graphAdapter.getModel().endUpdate();
+            mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter);
+            layout.execute(graphAdapter.getDefaultParent());
+
+            mxGraphView view =graphAdapter.getView();
+            view.setScale(2.5f);
+            String title = "";
+            if (isCategoryInfoInitialized) {
+                title = "Category " + category + " ( " + categoryName + " )";
+            } else {
+                title = "Category info N/A";
+            }
+            frame.setTitle(title);
+
+            //graphAdapter.repaint();
+            //graphComponent.refresh();
+        }
+    }
+}

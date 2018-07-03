@@ -6,10 +6,7 @@ import contentnet.category.UNSPSCRecord;
 import contentnet.weightprocessing.WeightProcessingDirectRelationStrategy;
 import contentnet.weightprocessing.WeightProcessingFarRelationStrategy;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class GeneralStrategy implements IStrategy {
 
@@ -19,11 +16,11 @@ public class GeneralStrategy implements IStrategy {
         this.IS_LOG_ENABLED = IS_LOG_ENABLED;
     }
 
-    public Set<String> processWordsInternally(String farWord, String word, boolean isLowerTreeLevel, Set<String> categoryContext, UNSPSCRecord categoryRecord) {
+    public Set<List<String>> processWordsInternally(String farWord, String word, boolean isLowerTreeLevel, Set<String> categoryContext, UNSPSCRecord categoryRecord) {
 
         Set<String> hasContextResultsForWord =
                 ResultProcessor.getInstance().extractEdgeEnds(
-                        ConceptnetAPI.getInstance().getHasContext(word), word);
+                        ConceptnetAPI.getInstance().getWordContext(word), word);
         //if (isProcessInContext && hasContextResultsForWord.size() > 0 ) {
         hasContextResultsForWord.removeIf(hasContextWord -> !categoryContext.contains(hasContextWord));
         if (hasContextResultsForWord.size() == 0) {
@@ -56,7 +53,7 @@ public class GeneralStrategy implements IStrategy {
             //String nextRelatedToWord = relatedToWords.get(i);
             Set<String> isAWordContexts =
                     ResultProcessor.getInstance().extractEdgeEnds(
-                            ConceptnetAPI.getInstance().getHasContext(nextIsAWord), nextIsAWord);
+                            ConceptnetAPI.getInstance().getWordContext(nextIsAWord), nextIsAWord);
             if (isAWordContexts.size() == 0) {
                 //relatedToWords.remove(i);
                 it.remove();
@@ -75,6 +72,17 @@ public class GeneralStrategy implements IStrategy {
             }
         }
 
-        return isAFilteredWords;
+        Set<List<String>> result = new HashSet<>();
+        for (String resultWord: isAFilteredWords) {
+            addWordToResult(result, resultWord);
+        }
+
+        return result;
+    }
+
+    private void addWordToResult(Set<List<String>> result, String isAWord) {
+        List<String> words = new ArrayList<>();
+        words.add(isAWord);
+        result.add(words);
     }
 }

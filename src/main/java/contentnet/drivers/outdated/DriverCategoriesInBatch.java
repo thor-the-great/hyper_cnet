@@ -1,16 +1,15 @@
-package contentnet.drivers;
+package contentnet.drivers.outdated;
 
 import contentnet.category.UNSPSCRecord;
 import contentnet.data.WordProvider;
+import contentnet.drivers.DriverGetContextFromCategory;
+import contentnet.drivers.DriverWordsByCategory;
 import contentnet.graph.ConceptEdge;
 import contentnet.graph.GraphAPI;
 import contentnet.graph.GraphUtils;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DirectedMultigraph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DriverCategoriesInBatch {

@@ -16,7 +16,7 @@ public class DriverTermRelated {
         DriverTermRelated driver = new DriverTermRelated();
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
         //GraphUtils.importGraph(wordGraph, GraphUtils._INWORK_1_CSV_FILE_PATH);
-        GraphUtils.importGraph(wordGraph, "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\wordGraph_25_words_5_levels_in_work_cleaned.csv");
+        //GraphUtils.importGraph(wordGraph, "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\wordGraph_25_words_5_levels_in_work_cleaned.csv");
         //GraphUtils.importGraph(wordGraph, "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\wordGraph.csv");
 
         driver.findRelated(wordGraph, wordToSearch, depth);

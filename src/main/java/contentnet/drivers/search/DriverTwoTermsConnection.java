@@ -17,7 +17,7 @@ public class DriverTwoTermsConnection {
     public static void main(String[] args) {
         DriverTwoTermsConnection driver = new DriverTwoTermsConnection();
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        GraphUtils.importGraph(wordGraph, "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\wordGraph_25_words_5_levels_in_work_cleaned.csv");//GraphUtils._DEFAULT_CSV_FILE_PATH);
+        //GraphUtils.importGraph(wordGraph, "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\wordGraph_25_words_5_levels_in_work_cleaned.csv");//GraphUtils._DEFAULT_CSV_FILE_PATH);
         //GraphUtils.importGraph(wordGraph, GraphUtils._INWORK_1_CSV_FILE_PATH);
 
         String searchWord = "rifle";

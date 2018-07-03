@@ -25,6 +25,33 @@ public class GraphAPI {
         return instance;
     }
 
+    public static void addEdgeToGraph(Graph<String, ConceptEdge> wordGraph, String source, String target, String edgeType, UNSPSCRecord categoryRecord) {
+        addEdgeToGraph(wordGraph, source, target, edgeType, categoryRecord.getUnspsc(), categoryRecord.getUnspscName());
+    }
+
+    public static void addEdgeToGraph(Graph<String, ConceptEdge> wordGraph, String source, String target, String edgeType, String category, String categoryName) {
+        if (source != null && target != null && source.equalsIgnoreCase(target))
+            return;
+        if (GraphUtils._CONCEPT_ROOT_NODE.equalsIgnoreCase(source)) {
+            if (!wordGraph.containsEdge(GraphUtils._CONCEPT_ROOT_NODE, target)) {
+                ConceptEdge newEdge = new ConceptEdge(ConceptEdge._RELATION_TYPE_GENERIC);
+                wordGraph.addEdge(GraphUtils._CONCEPT_ROOT_NODE, target, newEdge);
+                return;
+            }
+        }
+        if (!wordGraph.containsEdge(source, target)) {
+            ConceptEdge newEdge = new ConceptEdge(edgeType, category, categoryName);
+            wordGraph.addEdge(source, target, newEdge);
+            //special case for synonyms - need to add backward relation as well, because both words are equal
+            if (ConceptEdge._RELATION_TYPE_SYNONYM.equals(edgeType)) {
+                if (!wordGraph.containsEdge(target, source)) {
+                    ConceptEdge backloopSynonymRelationEdge = new ConceptEdge(edgeType, category, categoryName);
+                    wordGraph.addEdge(target, source, backloopSynonymRelationEdge);
+                }
+            }
+        }
+    }
+
     /**
      * Merges one graph into another. After merge mainGraph graph will have all the vertexes, but edges will be proceed and potentially changed.
      * GraphtoMerge will remain unchanged

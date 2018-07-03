@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ConceptGraphCSVExport  {
-        private static final char DEFAULT_DELIMITER = ',';
+        public static final char DEFAULT_DELIMITER = ',';
 
         //private final Set<CSVFormat.Parameter> parameters;
         private CSVFormat format;
@@ -23,7 +23,13 @@ public class ConceptGraphCSVExport  {
         public ConceptGraphCSVExport()
         {
             //this(new IntegerComponentNameProvider<>(), CSVFormat.ADJACENCY_LIST, DEFAULT_DELIMITER);
-            format = CSVFormat.ADJACENCY_LIST;
+            this(CSVFormat.ADJACENCY_LIST);
+        }
+
+        public ConceptGraphCSVExport(CSVFormat exportFormat)
+        {
+            //this(new IntegerComponentNameProvider<>(), CSVFormat.ADJACENCY_LIST, DEFAULT_DELIMITER);
+            format = exportFormat;
             delimiter = DEFAULT_DELIMITER;
         }
         /**
@@ -43,11 +49,12 @@ public class ConceptGraphCSVExport  {
                 case ADJACENCY_LIST:
                     exportAsAdjacencyList(g, out);
                     break;
-                //case MATRIX:
-                //    exportAsMatrix(g, out);
-                //    break;
+                case MATRIX:
+                    exportAsMatrix(g, out);
+                    break;
             }
             out.flush();
+            out.close();
         }
 
         void exportGraph(Graph<String, ConceptEdge> g, File file) throws ExportException
@@ -61,37 +68,97 @@ public class ConceptGraphCSVExport  {
 
         private void exportAsAdjacencyList(Graph<String, ConceptEdge> g, PrintWriter out)
         {
+            StringBuilder sbVertexes = new StringBuilder();
+            StringBuilder sbEdges = new StringBuilder();
             for (String v : g.vertexSet()) {
-                //exportEscapedField(out, vertexIDProvider.getName(v));
-                exportEscapedField(out, v);
-                Set<ConceptEdge> edges = new HashSet<>();
+                //save vertex
+                sbVertexes.append(escapeDSV(v, delimiter));
                 for (ConceptEdge e : g.outgoingEdgesOf(v)) {
-                    String w = Graphs.getOppositeVertex(g, e, v);
-                    out.print(delimiter);
-                    //exportEscapedField(out, vertexIDProvider.getName(w));
-                    exportEscapedField(out, w);
-                    edges.add(e);
-                }
-                out.println();
-                for (ConceptEdge e : edges) {
-                    out.print(e.getRelationType());
-                    out.print(":");
+                    //save vertex
+                    sbVertexes.append(delimiter);
+                    sbVertexes.append(escapeDSV(e.getTarget(),delimiter));
+                    //save edge
+                    sbEdges.append(e.getRelationType());
+                    sbEdges.append(":");
                     Map<String, Object> attributes = e.getAttributes();
                     int attrCount = 0;
                     for (String attrKey : attributes.keySet()) {
-                        out.print(attrKey);
-                        out.print("=");
-                        out.print(attributes.get(attrKey));
+                        sbEdges.append(attrKey);
+                        sbEdges.append("=");
+                        sbEdges.append(attributes.get(attrKey));
                         attrCount++;
                         if (attrCount < attributes.size())
-                            out.print(":");
+                            sbEdges.append(":");
                     }
-                    out.print(delimiter);
+                    sbEdges.append(delimiter);
                 }
-                if (edges.size() > 0)
+                out.print(sbVertexes.toString());
+                out.println();
+                out.print(sbEdges);
+                if(sbEdges.length() > 0)
                     out.println();
+
+                sbEdges.setLength(0);
+                sbVertexes.setLength(0);
             }
         }
+
+    private void exportAsMatrix(Graph<String, ConceptEdge> g, PrintWriter out)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SOURCE").append(delimiter);
+        sb.append("RELATION").append(delimiter);
+        sb.append("TARGET").append(delimiter);
+        sb.append("CATEGORY_CODE").append(delimiter);
+        sb.append("CATEGORY_NAME").append(delimiter);
+        sb.append("IS_CONNECTED_TO_ROOT").append(delimiter);
+        out.print(sb.toString());
+        out.println();
+        sb.setLength(0);
+        for (String v : g.vertexSet()) {
+            //save vertex
+            if (GraphUtils._CONCEPT_ROOT_NODE.equalsIgnoreCase(v))
+                continue;
+            //StringBuilder sb = new StringBuilder();
+            for (ConceptEdge e : g.outgoingEdgesOf(v)) {
+                //sb.setLength(0);
+                //first goes the source vertex
+                sb.append(escapeDSV(v, delimiter)).append(delimiter);
+                //type of egde
+                if (ConceptEdge._RELATION_TYPE_HYPERNYM.equals(e.getRelationType())) {
+                    sb.append("HN");
+                } else if (ConceptEdge._RELATION_TYPE_SYNONYM.equals(e.getRelationType())) {
+                    sb.append("SN");
+                }
+                sb.append(delimiter);
+                //target vertex
+                sb.append(escapeDSV(e.getTarget(), delimiter));
+                sb.append(delimiter);
+                //category code
+                sb.append(escapeDSV((String) e.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY), delimiter));
+                sb.append(delimiter);
+                //category name
+                sb.append(escapeDSV((String) e.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY_NAME), delimiter));
+                sb.append(delimiter);
+                //flag that this is connected to root node
+                Set<ConceptEdge> incomingEdges = g.incomingEdgesOf(v);
+                boolean isRootConnected = false;
+                for (ConceptEdge edge : incomingEdges) {
+                    if (GraphUtils._CONCEPT_ROOT_NODE.equalsIgnoreCase(edge.getSource())) {
+                        isRootConnected = true;
+                        break;
+                    }
+                }
+                sb.append(isRootConnected);
+                if (sb.length() > 0) {
+                    out.print(sb.toString());
+                    out.println();
+                    sb.setLength(0);
+                }
+            }
+        }
+    }
+
 
         private void exportEscapedField(PrintWriter out, String field)
         {

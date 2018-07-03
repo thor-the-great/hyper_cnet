@@ -42,7 +42,7 @@ public class DriverSearchByHypernym {
 
 
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        GraphUtils.importGraph(wordGraph, GraphUtils._INWORK_3_CSV_FILE_PATH);
+        //GraphUtils.importGraph(wordGraph, GraphUtils._INWORK_3_CSV_FILE_PATH);
 
         if (!wordGraph.containsVertex(hypernym)) {
             System.out.println("Word is not in concept graph");

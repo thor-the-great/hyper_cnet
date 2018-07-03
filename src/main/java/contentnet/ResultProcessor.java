@@ -115,12 +115,26 @@ public class ResultProcessor {
 
     public Map<String, Float> getRelationWeight(String mainWord, Set<String> wordsInQuestion) {
         Map<String, Float> wordsWeight = new HashMap();
+        int count = 0;
         for (String wordInQuestion: wordsInQuestion) {
-            float weightResult =
-                    ResultProcessor.getInstance().processRelationWeight(
-                            ConceptnetAPI.getInstance().getRelationWeight(mainWord, Utils.getLabelFromConceptContextName(wordInQuestion)));
+            count++;
+            //ugly workaround due to bug in conceptnet - it can't process correctly cases when we do filter by the complex word
+            //(more than 2 words). So it has to be on the first position in query. Result has transitive property so it will
+            //remain the same
+            boolean isMainWordComplex = mainWord.contains("_");
+            boolean isWordInQuestionComplex = wordInQuestion.contains("_");
+            float weightResult = 0.0f;
+            if ((!isMainWordComplex && !isWordInQuestionComplex) || (isMainWordComplex && !isWordInQuestionComplex)) {
+                weightResult = ResultProcessor.getInstance().processRelationWeight(
+                        ConceptnetAPI.getInstance().getRelationWeight(mainWord, Utils.getLabelFromConceptContextName(wordInQuestion)));
+            } else {
+                weightResult = ResultProcessor.getInstance().processRelationWeight(
+                        ConceptnetAPI.getInstance().getRelationWeight(Utils.getLabelFromConceptContextName(wordInQuestion), mainWord));
+            }
             wordsWeight.put(wordInQuestion, weightResult);
-            Utils.doDelay(Utils.DELAY);
+            if (count % 100 == 0)
+                System.out.println("Processed relation for " + count + " words");
+            //Utils.doDelay(Utils.DELAY);
         }
         return wordsWeight;
     }

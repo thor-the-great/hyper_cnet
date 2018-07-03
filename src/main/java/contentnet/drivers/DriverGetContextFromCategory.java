@@ -3,6 +3,8 @@ package contentnet.drivers;
 import contentnet.ResultProcessor;
 import contentnet.category.UNSPSCRecord;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -34,11 +36,29 @@ public class DriverGetContextFromCategory {
             ex.printStackTrace();
         }
 
-        String fileName2 = "C:\\work\\ariba\\unspsc_semantics_category_4321.txt";
-        Map<String, UNSPSCRecord> categorySemantics = new HashMap<>();
+        /*String fileName2 = "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\data\\hwByCategory_43212001_0613_1613.txt";
+        BufferedReader br;
+        UNSPSCRecord category = new UNSPSCRecord();
+        try {
+            br = new BufferedReader(new FileReader(fileName2));
+            String categoryValues = br.readLine().split(":")[1];
+            int firstSeparatorIndex = categoryValues.indexOf(",");
+            String categoryCode = categoryValues.substring(0, firstSeparatorIndex);
+            String categoryCodeDescription = categoryValues.substring(firstSeparatorIndex + 1);
+            category = new UNSPSCRecord();
+            category.setUnspsc(categoryCode);
+            category.setUnspscName(categoryCodeDescription);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
 
-        try (Stream<String> stream = Files.lines(Paths.get(fileName2))) {
-            Stream<String> streamSkipped = stream.skip(1);
+        String categoryToProcess = "43211804";
+
+        String fileName2 = "C:\\work\\ariba\\unspsc_semantics_category_4321_test.txt";
+            Map<String, UNSPSCRecord> categorySemantics = new HashMap<>();
+
+            try (Stream<String> stream = Files.lines(Paths.get(fileName2))) {
+                Stream<String> streamSkipped = stream.skip(1);
             Consumer<String> fileLineConsumer = (lineString) -> {
                 String[] splittedStrings = lineString.split(";");
                 String unspsc = splittedStrings[1].trim();
@@ -46,33 +66,27 @@ public class DriverGetContextFromCategory {
                 String semType = splittedStrings[2].trim();
                 String semWord = splittedStrings[3].trim();
 
-                if (!categorySemantics.containsKey(unspsc)) {
-                    UNSPSCRecord record = new UNSPSCRecord();
-                    record.setUnspsc(unspsc);
-                    record.setUnspscName(unspscName);
-                    List<String> attrList = new ArrayList<>();
-                    attrList.add(semWord);
-                    record.getAttributes().put(semType, attrList);
-                    categorySemantics.put(unspsc, record);
-                } else {
-                    UNSPSCRecord record = categorySemantics.get(unspsc);
-                    Map<String, List<String>> attr = record.getAttributes();
-                    if (attr.containsKey(semType)) {
-                        attr.get(semType).add(semWord);
-                    } else {
+                if (unspsc.equals(categoryToProcess)) {
+                    if (!categorySemantics.containsKey(unspsc)) {
+                        UNSPSCRecord record = new UNSPSCRecord();
+                        record.setUnspsc(unspsc);
+                        record.setUnspscName(unspscName);
                         List<String> attrList = new ArrayList<>();
                         attrList.add(semWord);
-                        attr.put(semType, attrList);
+                        record.getAttributes().put(semType, attrList);
+                        categorySemantics.put(unspsc, record);
+                    } else {
+                        UNSPSCRecord record = categorySemantics.get(unspsc);
+                        Map<String, List<String>> attr = record.getAttributes();
+                        if (attr.containsKey(semType)) {
+                            attr.get(semType).add(semWord);
+                        } else {
+                            List<String> attrList = new ArrayList<>();
+                            attrList.add(semWord);
+                            attr.put(semType, attrList);
+                        }
                     }
                 }
-                /*if (categorySemantics.containsKey(semWord)) {
-                    categorySemantics.get(semWord).add(unspscName);
-                } else {
-                    List<String> unspscNames = new ArrayList<>();
-                    unspscNames.add(unspscName);
-                    categorySemantics.put(semWord, unspscNames);
-                    //System.out.println(semType);
-                }*/
             };
             streamSkipped.forEach(fileLineConsumer);
         } catch (IOException ex) {
@@ -100,7 +114,7 @@ public class DriverGetContextFromCategory {
                 Set<String> contextOfOneAttribute = new HashSet<>();
                 for (String word : relationWeights.keySet()) {
                     float relationWeight = relationWeights.get(word);
-                    if (relationWeight > 0.35) {
+                    if (relationWeight > 0.2) {
                         System.out.println(word + " context, weight " + relationWeights.get(word) + " for category " + record.getUnspscName());
                         //record.getCategoryContext().add(word);
                         contextOfOneAttribute.add(word);

@@ -153,7 +153,7 @@ public class DriverHasContext {
         if (isProcessInContext) {
             Set<String> hasContextResults =
                     ResultProcessor.getInstance().extractEdgeEnds(
-                            ConceptnetAPI.getInstance().getHasContext(word), word);
+                            ConceptnetAPI.getInstance().getWordContext(word), word);
             /*for (int i = hasContextResults.size() - 1; i >= 0; i--) {
                 if (!ConceptnetAPI.ALLOWED_CONTEXT.contains(hasContextResults.get(i))) {
                     hasContextResults.remove(i);
@@ -229,7 +229,7 @@ public class DriverHasContext {
                     Utils.doDelay(DELAY);
                     Set<String> relatedToWordContexts =
                             ResultProcessor.getInstance().extractEdgeEnds(
-                                    ConceptnetAPI.getInstance().getHasContext(nextRelatedToWord), nextRelatedToWord);
+                                    ConceptnetAPI.getInstance().getWordContext(nextRelatedToWord), nextRelatedToWord);
                     if (relatedToWordContexts.size() == 0) {
                         //relatedToWords.remove(i);
                         it.remove();

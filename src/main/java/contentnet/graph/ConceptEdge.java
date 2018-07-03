@@ -59,6 +59,7 @@ public class ConceptEdge extends DefaultEdge {
     public String getEdgeDestination() {
         return edgeDestination;
     }
+
     public void setEdgeSourceDestination(String source, String destination) {
         edgeSource = source;
         edgeDestination = destination;

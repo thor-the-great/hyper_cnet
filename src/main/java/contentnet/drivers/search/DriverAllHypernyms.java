@@ -15,7 +15,7 @@ public class DriverAllHypernyms {
     public static void main (String[] args) {
         DriverAllHypernyms drive = new DriverAllHypernyms();
         Graph<String, DefaultEdge> wordGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        GraphUtils.importGraph(wordGraph, GraphUtils._INWORK_1_CSV_FILE_PATH);
+        //GraphUtils.importGraph(wordGraph, GraphUtils._INWORK_1_CSV_FILE_PATH);
         drive.getAllHypernyms("case", wordGraph);
     }
 
