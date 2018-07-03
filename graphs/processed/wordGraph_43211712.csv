@@ -1,0 +1,11 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+screen,HN,lcd,43211712,Graphics tablets,true
+stay,HN,stand,43211712,Graphics tablets,true
+rest,SN,stay,43211712,Graphics tablets,false
+stay,SN,rest,43211712,Graphics tablets,false
+substitution,HN,replacement,43211712,Graphics tablets,true
+pen,HN,ink,43211712,Graphics tablets,true
+style,HN,notepad,43211712,Graphics tablets,true
+style,HN,tablet,43211712,Graphics tablets,true
+series,HN,touch,43211712,Graphics tablets,false
+version,HN,series,43211712,Graphics tablets,true

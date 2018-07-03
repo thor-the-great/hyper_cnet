@@ -1,0 +1,21 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+shape,HN,solid,43212105,Laser printers,true
+substance,HN,solid,43212105,Laser printers,true
+technology,HN,solid,43212105,Laser printers,false
+speed,HN,page,43212105,Laser printers,true
+peripheral,HN,printer,43212105,Laser printers,true
+peripheral,SN,device,43212105,Laser printers,true
+copy,HN,print,43212105,Laser printers,true
+copy,SN,replication,43212105,Laser printers,true
+replication,SN,copy,43212105,Laser printers,false
+technology,HN,ink,43212105,Laser printers,false
+technology,HN,laser,43212105,Laser printers,false
+handbook,HN,manual,43212105,Laser printers,true
+connectivity,HN,cloud,43212105,Laser printers,true
+device,HN,laser,43212105,Laser printers,false
+device,SN,peripheral,43212105,Laser printers,false
+reference,HN,manual,43212105,Laser printers,true
+reference,SN,book,43212105,Laser printers,true
+book,SN,reference,43212105,Laser printers,false
+print,HN,technology,43212105,Laser printers,false
+duplex,HN,manual,43212105,Laser printers,true

@@ -1,0 +1,10 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+lan,SN,network,43211506,Thin client computers,false
+network,HN,ethernet,43211506,Thin client computers,true
+connection,HN,ethernet,43211506,Thin client computers,true
+network,SN,lan,43211506,Thin client computers,true
+capacity,HN,storage,43211506,Thin client computers,true
+capacity,SN,memory,43211506,Thin client computers,false
+memory,SN,capacity,43211506,Thin client computers,false
+feature,HN,speaker,43211506,Thin client computers,true
+version,HN,series,43211506,Thin client computers,true

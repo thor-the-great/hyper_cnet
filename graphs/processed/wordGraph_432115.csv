@@ -1,0 +1,14 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+laptop,HN,macbook,432115,Computers,false
+laptop,SN,computer,432115,Computers,false
+computer,HN,workstation,432115,Computers,true
+computer,SN,laptop,432115,Computers,true
+hardware,HN,computer,432115,Computers,true
+platform,HN,ring,432115,Computers,true
+platform,SN,podium,432115,Computers,true
+podium,SN,platform,432115,Computers,false
+version,HN,series,432115,Computers,true
+form,HN,mini,432115,Computers,true
+form,HN,stick,432115,Computers,true
+drive,HN,flash,432115,Computers,true
+storage,HN,flash,432115,Computers,true

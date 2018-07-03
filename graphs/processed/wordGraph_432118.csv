@@ -1,0 +1,21 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+transducer,HN,receiver,432118,Computer data input device accessories,true
+wireless,HN,receiver,432118,Computer data input device accessories,true
+pad,HN,mousepad,432118,Computer data input device accessories,true
+case,HN,bag,432118,Computer data input device accessories,true
+case,SN,storage,432118,Computer data input device accessories,true
+storage,SN,case,432118,Computer data input device accessories,false
+top,HN,cap,432118,Computer data input device accessories,true
+top,SN,head,432118,Computer data input device accessories,true
+head,SN,top,432118,Computer data input device accessories,false
+inactivity,HN,rest,432118,Computer data input device accessories,true
+inactivity,SN,inaction,432118,Computer data input device accessories,true
+inaction,SN,inactivity,432118,Computer data input device accessories,true
+inaction,HN,rest,432118,Computer data input device accessories,true
+cushion,HN,pillow,432118,Computer data input device accessories,true
+cushion,SN,absorber,432118,Computer data input device accessories,true
+absorber,SN,cushion,432118,Computer data input device accessories,false
+control,HN,management,432118,Computer data input device accessories,true
+battery,HN,bar,432118,Computer data input device accessories,true
+battery,HN,supercharger,432118,Computer data input device accessories,true
+power,HN,supercharger,432118,Computer data input device accessories,true

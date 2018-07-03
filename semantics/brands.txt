@@ -1,0 +1,5 @@
+roll,Rolls,43211604,Peripheral switch boxes
+art,Art,43211604,Peripheral switch boxes
+link,D-Link,43211604,Peripheral switch boxes
+technology,Atech Flash Technology,43211609,Universal serial bus hubs or connectors,true
+flash,Atech Flash Technology,43211609,Universal serial bus hubs or connectors,true

@@ -1,0 +1,12 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+mount,HN,rack,43211804,Keyboard drawers or shelves,true
+computer,HN,desktop,43211804,Keyboard drawers or shelves,true
+top,HN,desktop,43211804,Keyboard drawers or shelves,true
+device,HN,keyboard,43211804,Keyboard drawers or shelves,true
+device,HN,mouse,43211804,Keyboard drawers or shelves,true
+device,HN,drawer,43211804,Keyboard drawers or shelves,true
+mount,HN,desk,43211804,Keyboard drawers or shelves,true
+mount,HN,drawer,43211804,Keyboard drawers or shelves,true
+furniture,HN,desk,43211804,Keyboard drawers or shelves,true
+furniture,HN,mouse,43211804,Keyboard drawers or shelves,true
+furniture,HN,drawer,43211804,Keyboard drawers or shelves,true

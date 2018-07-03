@@ -1,0 +1,10 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+frequency,HN,audio,43211607,Computer speakers,true
+audio,HN,speaker,43211607,Computer speakers,false
+cable,HN,adapter,43211607,Computer speakers,true
+device,HN,adapter,43211607,Computer speakers,true
+device,HN,charger,43211607,Computer speakers,true
+device,HN,box,43211607,Computer speakers,true
+device,HN,switch,43211607,Computer speakers,true
+transducer,HN,speaker,43211607,Computer speakers,true
+communication,HN,audio,43211607,Computer speakers,true

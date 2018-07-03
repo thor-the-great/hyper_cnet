@@ -1,0 +1,20 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+device,HN,filter,432121,Computer printers,true
+device,HN,scanner,432121,Computer printers,true
+solid,HN,glass,432121,Computer printers,true
+publication,HN,book,432121,Computer printers,true
+publication,SN,issue,432121,Computer printers,true
+issue,SN,publication,432121,Computer printers,false
+copy,HN,book,432121,Computer printers,true
+service,HN,installation,432121,Computer printers,true
+care,HN,plan,432121,Computer printers,false
+aid,HN,service,432121,Computer printers,true
+aid,SN,help,432121,Computer printers,true
+help,SN,aid,432121,Computer printers,false
+draw,HN,pen,432121,Computer printers,true
+repair,HN,care,432121,Computer printers,true
+repair,SN,rectify,432121,Computer printers,true
+repair,HN,nozzle,432121,Computer printers,true
+rectify,SN,repair,432121,Computer printers,false
+instrument,HN,tape,432121,Computer printers,true
+warranty,HN,service,432121,Computer printers,true

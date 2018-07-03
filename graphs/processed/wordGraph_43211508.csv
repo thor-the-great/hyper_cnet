@@ -1,0 +1,18 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+computer,HN,desktop,43211508,Personal computers,true
+computer,HN,notebook,43211508,Personal computers,true
+computer,HN,workstation,43211508,Personal computers,true
+computer,HN,laptop,43211508,Personal computers,true
+fastener,HN,lock,43211508,Personal computers,true
+finish,HN,brush,43211508,Personal computers,true
+design,HN,brush,43211508,Personal computers,true
+material,HN,brush,43211508,Personal computers,true
+connection,HN,series,43211508,Personal computers,true
+issue,HN,edition,43211508,Personal computers,true
+security,HN,lock,43211508,Personal computers,true
+version,HN,edition,43211508,Personal computers,true
+version,HN,series,43211508,Personal computers,true
+system,HN,window,43211508,Personal computers,false
+operating,HN,system,43211508,Personal computers,true
+processor,HN,core,43211508,Personal computers,true
+drive,HN,burner,43211508,Personal computers,true

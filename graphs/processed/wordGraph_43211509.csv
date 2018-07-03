@@ -1,0 +1,22 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+tablet,SN,pad,43211509,Tablet computers,true
+tablet,HN,mini,43211509,Tablet computers,true
+tablet,HN,pro,43211509,Tablet computers,true
+tablet,HN,ipad,43211509,Tablet computers,true
+color,HN,black,43211509,Tablet computers,true
+color,SN,semblance,43211509,Tablet computers,true
+side,HN,rear,43211509,Tablet computers,true
+side,HN,front,43211509,Tablet computers,true
+side,SN,position,43211509,Tablet computers,true
+device,HN,sensor,43211509,Tablet computers,true
+position,HN,front,43211509,Tablet computers,true
+position,SN,side,43211509,Tablet computers,true
+graphite,HN,lead,43211509,Tablet computers,true
+graphite,SN,plumbago,43211509,Tablet computers,true
+metallic_element,HN,lead,43211509,Tablet computers,true
+change,HN,motion,43211509,Tablet computers,true
+change,SN,transform,43211509,Tablet computers,true
+pad,SN,tablet,43211509,Tablet computers,false
+semblance,SN,color,43211509,Tablet computers,false
+plumbago,SN,graphite,43211509,Tablet computers,false
+transform,SN,change,43211509,Tablet computers,false

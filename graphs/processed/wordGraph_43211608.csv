@@ -1,0 +1,10 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+transmission,HN,channel,43211608,Encoder decoder equipment,true
+system,HN,network,43211608,Encoder decoder equipment,true
+device,HN,box,43211608,Encoder decoder equipment,true
+device,HN,decoder,43211608,Encoder decoder equipment,true
+device,HN,encoder,43211608,Encoder decoder equipment,true
+signal,HN,audio,43211608,Encoder decoder equipment,true
+signal,HN,video,43211608,Encoder decoder equipment,true
+circuit,HN,decoder,43211608,Encoder decoder equipment,true
+circuit,HN,encoder,43211608,Encoder decoder equipment,true

@@ -1,0 +1,7 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+screen,HN,lcd,43211902,Liquid crystal display LCD panels or monitors,true
+crystal,HN,lcd,43211902,Liquid crystal display LCD panels or monitors,true
+edge,HN,bezel,43211902,Liquid crystal display LCD panels or monitors,true
+edge,SN,boundary,43211902,Liquid crystal display LCD panels or monitors,true
+boundary,SN,edge,43211902,Liquid crystal display LCD panels or monitors,false
+version,HN,series,43211902,Liquid crystal display LCD panels or monitors,true

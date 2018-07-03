@@ -1,0 +1,9 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+device,HN,adapter,432117,Computer data input devices,true
+device,HN,charger,432117,Computer data input devices,true
+device,HN,battery,432117,Computer data input devices,true
+convertor,HN,adapter,432117,Computer data input devices,true
+surface,HN,sheet,432117,Computer data input devices,true
+computer,HN,switch,432117,Computer data input devices,true
+device,HN,switch,432117,Computer data input devices,true
+computer,HN,notebook,432117,Computer data input devices,true

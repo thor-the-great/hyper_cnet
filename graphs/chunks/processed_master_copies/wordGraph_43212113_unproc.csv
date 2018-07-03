@@ -1,0 +1,20 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+peripheral,HN,printer,43212113,Compact disc CD or labeling printers,true
+peripheral,SN,peripheral_device,43212113,Compact disc CD or labeling printers,true
+peripheral_device,SN,peripheral,43212113,Compact disc CD or labeling printers,false
+machine,HN,printer,43212113,Compact disc CD or labeling printers,true
+machine,SN,car,43212113,Compact disc CD or labeling printers,true
+car,SN,machine,43212113,Compact disc CD or labeling printers,false
+device,HN,printer,43212113,Compact disc CD or labeling printers,true
+argument,HN,pro,43212113,Compact disc CD or labeling printers,true
+argument,SN,dispute,43212113,Compact disc CD or labeling printers,true
+dispute,SN,argument,43212113,Compact disc CD or labeling printers,false
+software,HN,pro,43212113,Compact disc CD or labeling printers,true
+firm,HN,publisher,43212113,Compact disc CD or labeling printers,true
+firm,SN,strong,43212113,Compact disc CD or labeling printers,true
+strong,SN,firm,43212113,Compact disc CD or labeling printers,false
+album,HN,ray,43212113,Compact disc CD or labeling printers,true
+spine,HN,ray,43212113,Compact disc CD or labeling printers,true
+spine,SN,spinal_column,43212113,Compact disc CD or labeling printers,true
+spinal_column,SN,spine,43212113,Compact disc CD or labeling printers,false
+vector,HN,ray,43212113,Compact disc CD or labeling printers,true

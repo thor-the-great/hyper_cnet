@@ -1,0 +1,8 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+screen,HN,lcd,43212001,Computer display glare screens,true
+computer,HN,laptop,43212001,Computer display glare screens,true
+cover,SN,covering,43212001,Computer display glare screens,false
+covering,SN,cover,43212001,Computer display glare screens,true
+covering,HN,shade,43212001,Computer display glare screens,true
+covering,HN,hood,43212001,Computer display glare screens,true
+screen,HN,display,43212001,Computer display glare screens,true

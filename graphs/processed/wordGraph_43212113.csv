@@ -1,0 +1,8 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+peripheral,HN,printer,43212113,Compact disc CD or labeling printers,true
+peripheral,SN,device,43212113,Compact disc CD or labeling printers,true
+device,HN,printer,43212113,Compact disc CD or labeling printers,true
+device,SN,peripheral,43212113,Compact disc CD or labeling printers,true
+format,HN,ray,43212113,Compact disc CD or labeling printers,true
+version,HN,series,443212113,Compact disc CD or labeling printers,true
+series,SN,pro,43212113,Compact disc CD or labeling printers,false

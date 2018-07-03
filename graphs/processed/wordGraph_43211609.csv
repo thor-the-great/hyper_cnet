@@ -1,0 +1,17 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+power,HN,charge,43211609,Universal serial bus hubs or connectors,true
+center,HN,hub,43211609,Universal serial bus hubs or connectors,true
+device,HN,adapter,43211609,Universal serial bus hubs or connectors,true
+device,HN,card,43211609,Universal serial bus hubs or connectors,true
+device,SN,storage,43211609,Universal serial bus hubs or connectors,true
+device,SN,reader,43211609,Universal serial bus hubs or connectors,true
+device,HN,hub,43211609,Universal serial bus hubs or connectors,true
+storage,SN,device,43211609,Universal serial bus hubs or connectors,false
+reader,SN,device,43211609,Universal serial bus hubs or connectors,false
+container,HN,case,43211609,Universal serial bus hubs or connectors,true
+record,HN,card,43211609,Universal serial bus hubs or connectors,true
+connector,HN,usb,43211609,Universal serial bus hubs or connectors,true
+connector,SN,interface,43211609,Universal serial bus hubs or connectors,true
+usb,HN,type,43211609,Universal serial bus hubs or connectors,false
+interface,SN,connector,43211609,Universal serial bus hubs or connectors,false
+hardware,HN,hub,43211609,Universal serial bus hubs or connectors,true

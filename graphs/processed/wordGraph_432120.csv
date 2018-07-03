@@ -1,0 +1,7 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+platform,HN,dock,432120,Computer display accessories,true
+device,HN,converter,432120,Computer display accessories,true
+device,HN,hub,432120,Computer display accessories,true
+part,HN,hub,432120,Computer display accessories,true
+storage,HN,bag,432120,Computer display accessories,true
+adapter,HN,male,432120,Computer display accessories,true

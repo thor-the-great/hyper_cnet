@@ -1,0 +1,23 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+top,HN,head,43212103,Dye sublimination printers,true
+replacement,HN,head,43212103,Dye sublimination printers,false
+substitution,HN,replacement,43212103,Dye sublimination printers,true
+peripheral,HN,printer,43212103,Dye sublimination printers,true
+peripheral,SN,device,43212103,Dye sublimination printers,true
+peripheral,HN,laminator,43212103,Dye sublimination printers,true
+device,HN,chip,43212103,Dye sublimination printers,true
+device,SN,semiconductor,43212103,Dye sublimination printers,true
+device,SN,peripheral,43212103,Dye sublimination printers,true
+semiconductor,SN,device,43212103,Dye sublimination printers,false
+wheel,HN,roller,43212103,Dye sublimination printers,true
+wheel,SN,rack,43212103,Dye sublimination printers,true
+rack,SN,wheel,43212103,Dye sublimination printers,false
+cylinder,HN,roller,43212103,Dye sublimination printers,true
+graphic,HN,hologram,43212103,Dye sublimination printers,true
+picture,HN,hologram,43212103,Dye sublimination printers,true
+picture,SN,ikon,43212103,Dye sublimination printers,true
+ikon,SN,picture,43212103,Dye sublimination printers,false
+series,HN,tattoo,43212103,Dye sublimination printers,false
+version,HN,series,43212103,Dye sublimination printers,true
+printer,HN,head,43212103,Dye sublimination printers,true
+replacement,HN,roller,43212103,Dye sublimination printers,false

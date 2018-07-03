@@ -1,0 +1,21 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+furniture,HN,stand,43211602,Docking stations,true
+table,HN,stand,43211602,Docking stations,true
+fastener,HN,lock,43211602,Docking stations,true
+restraint,HN,lock,43211602,Docking stations,true
+restraint,SN,chasteness,43211602,Docking stations,true
+chasteness,SN,restraint,43211602,Docking stations,false
+mechanism,HN,lock,43211602,Docking stations,true
+compartment,HN,module,43211602,Docking stations,true
+platform,HN,dock,43211602,Docking stations,true
+platform,HN,cradle,43211602,Docking stations,true
+platform,SN,podium,43211602,Docking stations,true
+podium,SN,platform,43211602,Docking stations,false
+top,HN,head,43211602,Docking stations,true
+bottom,HN,foot,43211602,Docking stations,true
+bottom,SN,bed,43211602,Docking stations,true
+bed,SN,bottom,43211602,Docking stations,true
+floor,HN,loft,43211602,Docking stations,true
+floor,SN,deck,43211602,Docking stations,true
+deck,SN,floor,43211602,Docking stations,false
+circuit,HN,module,43211602,Docking stations,true

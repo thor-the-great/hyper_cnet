@@ -1,0 +1,27 @@
+SOURCE,RELATION,TARGET,CATEGORY_CODE,CATEGORY_NAME,IS_CONNECTED_TO_ROOT,
+function,HN,medical,432119,Computer displays,true
+charge,HN,wireless,432119,Computer displays,true
+connection,HN,wireless,432119,Computer displays,true
+connection,HN,hub,432119,Computer displays,true
+contact,HN,touch,432119,Computer displays,true
+contact,SN,reach,432119,Computer displays,false
+reach,SN,contact,432119,Computer displays,false
+feature,HN,frame,432119,Computer displays,false
+form,HN,frame,432119,Computer displays,false
+series,HN,smart,432119,Computer displays,false
+series,HN,touch,432119,Computer displays,false
+series,HN,predator,432119,Computer displays,false
+feature,HN,hub,432119,Computer displays,true
+feature,HN,tracking,432119,Computer displays,true
+sound,HN,speaker,432119,Computer displays,true
+sensing,HN,touch,432119,Computer displays,true
+case,HN,kit,432119,Computer displays,true
+case,SN,casing,432119,Computer displays,true
+casing,SN,case,432119,Computer displays,false
+gear,HN,kit,432119,Computer displays,true
+gear,SN,gearing,432119,Computer displays,true
+gearing,SN,gear,432119,Computer displays,false
+factor,HN,wall,432119,Computer displays,true
+form,HN,wall,432119,Computer displays,true
+storage,HN,drawer,432119,Computer displays,true
+version,HN,series,432119,Computer displays,true
