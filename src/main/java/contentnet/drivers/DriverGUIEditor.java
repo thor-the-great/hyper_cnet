@@ -34,7 +34,8 @@ public class DriverGUIEditor {
 
     void doWork() {
         Graph<String, ConceptEdge> wordGraph = new DirectedMultigraph<>(ConceptEdge.class);
-        String fileName = "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\chunks\\interim_copies\\wordGraph_43211608_inwork.csv.proc12";
+        //String fileName = "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\chunks\\interim_copies\\wordGraph_43211608_inwork.csv.proc12";
+        String fileName = "";
         if (new File(fileName).exists()) {
             GraphUtils.importGraphMatrix(wordGraph, fileName);
         }
@@ -94,30 +95,27 @@ public class DriverGUIEditor {
 
         JPanel  buttonsPane = new JPanel(new FlowLayout());
 
-        JButton addHypEdgeButton = new JButton("Add hypernym edge");
-        addHypEdgeButton.addMouseListener(new MouseAdapter() {
+        JButton addNewEdgeButton = new JButton("Add edge");
+        addNewEdgeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                System.out.println("Add edge hypernym");
-                addEdge(selectedVertexes, lGraph, graphAdapter, listModel, ConceptEdge._RELATION_TYPE_HYPERNYM);
-            }
-        });
+                System.out.println("Add edge");
 
-        JButton addSynEdgeButton = new JButton("Add synonym edge");
-        addSynEdgeButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent mouseEvent) {
-                System.out.println("Add synonym hypernym");
-                addEdge(selectedVertexes, lGraph, graphAdapter, listModel, ConceptEdge._RELATION_TYPE_SYNONYM);
-            }
-        });
+                Object[] relationTypes = {ConceptEdge._RELATION_TYPE_HYPERNYM, ConceptEdge._RELATION_TYPE_SYNONYM, ConceptEdge._RELATION_TYPE_GENERIC};
+                String edgeRelationType = (String)JOptionPane.showInputDialog(
+                        frame,
+                        "Type of edge relation",
+                        "Create new edge",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        relationTypes,
+                        ConceptEdge._RELATION_TYPE_HYPERNYM);
 
-        JButton addGenEdgeButton = new JButton("Add gen edge");
-        addGenEdgeButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent mouseEvent) {
-                System.out.println("Add synonym hypernym");
-                addEdge(selectedVertexes, lGraph, graphAdapter, listModel, ConceptEdge._RELATION_TYPE_GENERIC);
+                if ((edgeRelationType != null) && (edgeRelationType.length() > 0)) {
+                    addEdge(selectedVertexes, lGraph, graphAdapter, listModel, ConceptEdge._RELATION_TYPE_HYPERNYM);
+                }
+
+                //addEdge(selectedVertexes, lGraph, graphAdapter, listModel, ConceptEdge._RELATION_TYPE_HYPERNYM);
             }
         });
 
@@ -245,9 +243,7 @@ public class DriverGUIEditor {
         });
 
         buttonsPane.add(loadNewGraphButton);
-        buttonsPane.add(addHypEdgeButton);
-        buttonsPane.add(addSynEdgeButton);
-        buttonsPane.add(addGenEdgeButton);
+        buttonsPane.add(addNewEdgeButton);
         buttonsPane.add(addVertexButton);
         buttonsPane.add(deleteVertexes);
         buttonsPane.add(deleteVertexesWSyn);
@@ -257,7 +253,7 @@ public class DriverGUIEditor {
         buttonsPane.add(save);
         JSplitPane outer = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                 inner, buttonsPane);
-        outer.setDividerLocation(360);
+        outer.setDividerLocation(700);
         outer.setResizeWeight(1);
         outer.setDividerSize(5);
         outer.setBorder(null);
@@ -265,6 +261,7 @@ public class DriverGUIEditor {
         frame.add(outer);
 
         frame.pack();
+        frame.setSize(1500, 800);
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
     }
@@ -291,13 +288,8 @@ public class DriverGUIEditor {
         }
 
         String[] categoryInfo = GraphUtils.getGraphCategoryInfo(lGraph);
-
-        /*ConceptEdge newEdge = new ConceptEdge(edgeType, categoryInfo[0], categoryInfo[1]);
-        newEdge.setEdgeSourceDestination(sourceVertex, destinationVertex);*/
-
         graphAdapter.getModel().beginUpdate();
         GraphAPI.addEdgeToGraph(lGraph, sourceVertex, destinationVertex, edgeType, categoryInfo[0], categoryInfo[1]);
-        //lGraph.addEdge(sourceVertex, destinationVertex, newEdge);
         graphAdapter.getModel().endUpdate();
         selectedVertexes.clear();
         listModel.removeAllElements();
