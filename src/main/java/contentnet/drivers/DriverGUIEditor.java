@@ -29,13 +29,15 @@ import java.util.List;
  */
 public class DriverGUIEditor {
 
-    String workDir = "";
+    String workDir = System.getProperty("user.dir");
     JFrame frame;
 
     void doWork() {
         Graph<String, ConceptEdge> wordGraph = new DirectedMultigraph<>(ConceptEdge.class);
-        String fileName = "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\chunks\\interim_copies\\wordGraph_43211608_inwork.csv.proc";
-        GraphUtils.importGraphMatrix(wordGraph, fileName);
+        String fileName = "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\graphs\\chunks\\interim_copies\\wordGraph_43211608_inwork.csv.proc12";
+        if (new File(fileName).exists()) {
+            GraphUtils.importGraphMatrix(wordGraph, fileName);
+        }
         ListenableGraph<String, ConceptEdge> lGraph = new DefaultListenableGraph(wordGraph);
 
         String[] categoryInfo = GraphUtils.getGraphCategoryInfo(wordGraph);
@@ -43,8 +45,6 @@ public class DriverGUIEditor {
 
         frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //String category = "", categoryName = "";
 
         JGraphXAdapter<String, ConceptEdge> graphAdapter = new JGraphXAdapter<>(lGraph);
 
@@ -230,17 +230,17 @@ public class DriverGUIEditor {
                 if (workDir.equals(""))
                     workDir = workDir.equalsIgnoreCase("") ? System.getProperty("user.dir") : workDir;
                 JFileChooser fc = new JFileChooser(workDir);
-                int rc = fc.showDialog(null, mxResources.get("save"));
-                String exportFilename = fc.getSelectedFile().getAbsolutePath();
-                if (new File(exportFilename).exists()
-                        && JOptionPane.showConfirmDialog(graphComponent,"Overwrite existing file?") != JOptionPane.YES_OPTION)
-                {
-                    return;
+                int rc = fc.showDialog(null, "Save graph");
+                if (rc == JFileChooser.APPROVE_OPTION) {
+                    String exportFilename = fc.getSelectedFile().getAbsolutePath();
+                    if (new File(exportFilename).exists()
+                            && JOptionPane.showConfirmDialog(graphComponent, "Overwrite existing file?") != JOptionPane.YES_OPTION) {
+                        return;
+                    } else { 
+                        GraphUtils.exportGraph(exportFilename + ".edit", lGraph, CSVFormat.MATRIX);
+                    }
+                    workDir = fc.getSelectedFile().getParent();
                 }
-                else {
-                    GraphUtils.exportGraph(exportFilename + ".edit", lGraph, CSVFormat.MATRIX);
-                }
-                //
             }
         });
 
@@ -262,8 +262,6 @@ public class DriverGUIEditor {
         outer.setDividerSize(5);
         outer.setBorder(null);
 
-
-        //frame.add(graphComponent);
         frame.add(outer);
 
         frame.pack();
@@ -306,36 +304,6 @@ public class DriverGUIEditor {
     }
 
     public static void main(String[] args) {
-        //reads folder and filter file names as per pattern, put those filtered names as strings to the list
-        /*String hwByCategoriesExportFolder = "C:\\dev\\workspaces\\ao_conceptnet_github\\hyper_cnet\\data\\";
-        List<String> processedCategories = new ArrayList<>();
-        try(Stream<Path> filePaths = Files.walk(Paths.get(hwByCategoriesExportFolder))) {
-            filePaths.filter(Files::isRegularFile).
-                    filter(filePath -> filePath.getFileName().toString().startsWith("hwByCategory") && filePath.getFileName().toString().endsWith("txt")).
-                    forEach(filePath -> processedCategories.add(filePath.getFileName().toString().split("_")[1]));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        processedCategories.forEach(System.out::println);*/
-
-        /*String[] params = new String[4];
-        params[0] = "C:\\dev\\python\\anaconda\\envs\\wordnet_nltk\\python.exe";
-        params[1] = "C:\\work\\ariba\\wordnet_nltk\\wn_test1.py";
-        params[2] = "lcd";
-        params[3] = "computer_display";
-
-        try {
-            Process pythonScriptProcess = Runtime.getRuntime().exec(params);
-            BufferedReader br = new BufferedReader(new InputStreamReader(pythonScriptProcess.getInputStream()));
-            String scriptOutput = br.readLine();
-            System.out.println(scriptOutput);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-        /*List<String> result = NltkAPI.getInstance().getLowestCommonHypernyms("touchscreen", "computer_display");
-        result.forEach(System.out::println);*/
-
         DriverGUIEditor driver = new DriverGUIEditor();
         driver.doWork();
     }
@@ -358,59 +326,61 @@ public class DriverGUIEditor {
             workDir = workDir.equalsIgnoreCase("") ? System.getProperty("user.dir") : workDir;
             JFileChooser fc = new JFileChooser(workDir);
             int rc = fc.showDialog(null, "Load graph");
-            String selectedFilePath = fc.getSelectedFile().getAbsolutePath();
-            workDir = fc.getSelectedFile().getParent();
-            graphAdapter.getModel().beginUpdate();
-            wordGraph = new DirectedMultigraph<>(ConceptEdge.class);
-            GraphUtils.importGraphMatrix(wordGraph, selectedFilePath);
-            //
-            //lGraph = new DefaultListenableGraph<>(wordGraph);
-            Set<String> vertexes = new HashSet<>();
-            for (Iterator<String> it = lGraph.vertexSet().iterator(); it.hasNext();) {
-                vertexes.add(it.next());
-            }
-            for (String vertex : vertexes) {
-                lGraph.removeVertex(vertex);
-            }
-            System.out.println(lGraph.vertexSet());
-
-            String category = "", categoryName = "";
-            boolean isCategoryInfoInitialized = false;
-            for (String vertex: wordGraph.vertexSet()) {
-                if (!lGraph.containsVertex(vertex)) {
-                    lGraph.addVertex(vertex);
+            if (rc == JFileChooser.APPROVE_OPTION) {
+                String selectedFilePath = fc.getSelectedFile().getAbsolutePath();
+                workDir = fc.getSelectedFile().getParent();
+                graphAdapter.getModel().beginUpdate();
+                wordGraph = new DirectedMultigraph<>(ConceptEdge.class);
+                GraphUtils.importGraphMatrix(wordGraph, selectedFilePath);
+                //
+                //lGraph = new DefaultListenableGraph<>(wordGraph);
+                Set<String> vertexes = new HashSet<>();
+                for (Iterator<String> it = lGraph.vertexSet().iterator(); it.hasNext(); ) {
+                    vertexes.add(it.next());
                 }
+                for (String vertex : vertexes) {
+                    lGraph.removeVertex(vertex);
+                }
+                System.out.println(lGraph.vertexSet());
 
-                Set<ConceptEdge> outEdges = wordGraph.outgoingEdgesOf(vertex);
-                for (ConceptEdge edge : outEdges) {
-                    String targetV = edge.getTarget();
-                    if (!lGraph.containsVertex(targetV))
-                        lGraph.addVertex(targetV);
-                    ConceptEdge clonedEdge = (ConceptEdge) edge.clone();
-                    if (!isCategoryInfoInitialized && !ConceptEdge._RELATION_TYPE_GENERIC.equals(clonedEdge.getRelationType())) {
-                        category = (String) clonedEdge.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY);
-                        categoryName = (String) clonedEdge.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY_NAME);
-                        isCategoryInfoInitialized = true;
+                String category = "", categoryName = "";
+                boolean isCategoryInfoInitialized = false;
+                for (String vertex : wordGraph.vertexSet()) {
+                    if (!lGraph.containsVertex(vertex)) {
+                        lGraph.addVertex(vertex);
                     }
-                    lGraph.addEdge(vertex, targetV, clonedEdge);
+
+                    Set<ConceptEdge> outEdges = wordGraph.outgoingEdgesOf(vertex);
+                    for (ConceptEdge edge : outEdges) {
+                        String targetV = edge.getTarget();
+                        if (!lGraph.containsVertex(targetV))
+                            lGraph.addVertex(targetV);
+                        ConceptEdge clonedEdge = (ConceptEdge) edge.clone();
+                        if (!isCategoryInfoInitialized && !ConceptEdge._RELATION_TYPE_GENERIC.equals(clonedEdge.getRelationType())) {
+                            category = (String) clonedEdge.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY);
+                            categoryName = (String) clonedEdge.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY_NAME);
+                            isCategoryInfoInitialized = true;
+                        }
+                        lGraph.addEdge(vertex, targetV, clonedEdge);
+                    }
                 }
+
+                System.out.println(lGraph.vertexSet());
+
+                graphAdapter.getModel().endUpdate();
+                mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter);
+                layout.execute(graphAdapter.getDefaultParent());
+
+                mxGraphView view = graphAdapter.getView();
+                view.setScale(2.5f);
+                String title = "";
+                if (isCategoryInfoInitialized) {
+                    title = "Category " + category + " ( " + categoryName + " )";
+                } else {
+                    title = "Category info N/A";
+                }
+                frame.setTitle(title);
             }
-
-            System.out.println(lGraph.vertexSet());
-
-            graphAdapter.getModel().endUpdate();
-            mxIGraphLayout layout = new mxHierarchicalLayout(graphAdapter);
-            layout.execute(graphAdapter.getDefaultParent());
-
-            mxGraphView view =graphAdapter.getView();
-            view.setScale(2.5f);
-            String title = "";
-            if (isCategoryInfoInitialized) {
-                title = "Category " + category + " ( " + categoryName + " )";
-            } else {
-                title = "Category info N/A";
-            }
-            frame.setTitle(title);
 
             //graphAdapter.repaint();
             //graphComponent.refresh();
