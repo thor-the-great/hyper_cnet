@@ -112,7 +112,7 @@ public class DriverGUIEditor {
                         ConceptEdge._RELATION_TYPE_HYPERNYM);
 
                 if ((edgeRelationType != null) && (edgeRelationType.length() > 0)) {
-                    addEdge(selectedVertexes, lGraph, graphAdapter, listModel, ConceptEdge._RELATION_TYPE_HYPERNYM);
+                    addEdge(selectedVertexes, lGraph, graphAdapter, listModel, edgeRelationType);
                 }
 
                 //addEdge(selectedVertexes, lGraph, graphAdapter, listModel, ConceptEdge._RELATION_TYPE_HYPERNYM);
@@ -220,6 +220,18 @@ public class DriverGUIEditor {
             }
         });
 
+        JButton sanitizeGraphButton = new JButton("Sanitize");
+        sanitizeGraphButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                System.out.println("Sanitize");
+                graphAdapter.getModel().beginUpdate();
+                GraphUtils.sanitizeGraph(lGraph);
+                graphAdapter.getModel().endUpdate();
+                graphAdapter.repaint();
+            }
+        });
+
         JButton save = new JButton("Save");
         save.addMouseListener(new MouseAdapter() {
             @Override
@@ -235,7 +247,7 @@ public class DriverGUIEditor {
                             && JOptionPane.showConfirmDialog(graphComponent, "Overwrite existing file?") != JOptionPane.YES_OPTION) {
                         return;
                     } else { 
-                        GraphUtils.exportGraph(exportFilename + ".edit", lGraph, CSVFormat.MATRIX);
+                        GraphUtils.exportGraph(exportFilename, lGraph, CSVFormat.MATRIX);
                     }
                     workDir = fc.getSelectedFile().getParent();
                 }
@@ -245,9 +257,11 @@ public class DriverGUIEditor {
         buttonsPane.add(loadNewGraphButton);
         buttonsPane.add(addNewEdgeButton);
         buttonsPane.add(addVertexButton);
+        buttonsPane.add(addVertexButton);
         buttonsPane.add(deleteVertexes);
         buttonsPane.add(deleteVertexesWSyn);
         buttonsPane.add(deleteEdges);
+        buttonsPane.add(sanitizeGraphButton);
         buttonsPane.add(clearSelectionButton);
         buttonsPane.add(reloadGraphButton);
         buttonsPane.add(save);

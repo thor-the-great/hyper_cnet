@@ -160,7 +160,7 @@ public class DriverSemanticOptimization {
         //doEnrichmentOptimization(wordGraph, unspscCategory, unspscCategoryName, synonyms, ConceptEdge._RELATION_TYPE_SYNONYM);
         doEnrichmentOptimization(wordGraph, unspscCategory, unspscCategoryName, categories);
 
-        sanitizeGraph(wordGraph);
+        GraphUtils.sanitizeGraph(wordGraph);
 
         iterator = new DepthFirstIterator(wordGraph, GraphUtils._CONCEPT_ROOT_NODE);
         while (iterator.hasNext()) {
@@ -181,7 +181,7 @@ public class DriverSemanticOptimization {
                 continue;
         }
 
-        sanitizeGraph(wordGraph);
+        GraphUtils.sanitizeGraph(wordGraph);
 
         GraphUtils.displayGraph(wordGraph);
         GraphUtils.exportGraph(exportFileName, wordGraph, CSVFormat.MATRIX);
@@ -387,50 +387,6 @@ public class DriverSemanticOptimization {
             }
         }
         graph.removeVertex(vertex);
-    }
-
-    private void sanitizeGraph(Graph<String, ConceptEdge> graph) {
-        GraphIterator<String, DefaultEdge> iterator = new DepthFirstIterator(graph, GraphUtils._CONCEPT_ROOT_NODE);
-        while (iterator.hasNext()) {
-            String nextVertex = iterator.next();
-            Set<String> directChildren = new HashSet<>();
-            Set<ConceptEdge> edges = graph.outgoingEdgesOf(nextVertex);
-            for (ConceptEdge edge : edges) {
-                directChildren.add(edge.getTarget());
-            }
-            for ( String directChildVertex : directChildren ) {
-                Set<ConceptEdge> directEdges = graph.getAllEdges(nextVertex, directChildVertex);
-                int genCount = 0;
-                int hyperCount = 0;
-                int synonymCount = 0;
-                for (Iterator<ConceptEdge> it = directEdges.iterator(); it.hasNext();) {
-                    ConceptEdge edge = it.next();
-                    if (ConceptEdge._RELATION_TYPE_GENERIC.equals(edge.getRelationType())) {
-                        if (genCount == 0)
-                            genCount++;
-                        else {
-                            it.remove();
-                            graph.removeEdge(edge);
-                        }
-                    } else if (ConceptEdge._RELATION_TYPE_HYPERNYM.equals(edge.getRelationType())) {
-                        if (hyperCount == 0)
-                            hyperCount++;
-                        else {
-                            it.remove();
-                            graph.removeEdge(edge);
-                        }
-                    } else if (ConceptEdge._RELATION_TYPE_SYNONYM.equals(edge.getRelationType())) {
-                        if (synonymCount == 0)
-                            synonymCount++;
-                        else {
-                            it.remove();
-                            graph.removeEdge(edge);
-                        }
-                    }
-                }
-            }
-
-        }
     }
 
     public void collectStatistics() {

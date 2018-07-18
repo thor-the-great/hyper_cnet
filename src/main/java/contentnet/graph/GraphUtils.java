@@ -14,6 +14,8 @@ import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.io.*;
+import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.traverse.GraphIterator;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -89,31 +91,6 @@ public class GraphUtils {
     public static void exportGraph(String fileToExport, Graph<String, ConceptEdge> graph) {
         exportGraph(fileToExport, graph, CSVFormat.ADJACENCY_LIST);
     }
-
-    /*public static Graph<String, DefaultEdge> importGraph(Graph<String, DefaultEdge> graph, String filePath) {
-        File graphFile = new File(filePath);
-        CSVImporter<String, DefaultEdge> graphImporter = new CSVImporter(
-                new VertexProvider() {
-                    @Override
-                    public Object buildVertex(String s, Map map) {
-                        return s;
-                    }
-                },
-                new EdgeProvider() {
-                    @Override
-                    public Object buildEdge(Object o, Object v1, String s, Map map) {
-                        DefaultEdge edge = new DefaultEdge();
-                        return edge;
-                        //return null;
-                    }
-                });
-        try {
-            graphImporter.importGraph(graph, graphFile);
-        } catch (ImportException e) {
-            e.printStackTrace();
-        }
-        return graph;
-    }*/
 
     public static Graph<String, ConceptEdge> importGraphMatrix(Graph<String, ConceptEdge> graph, String filePath) {
         ConceptGraphCSVImporterSimple graphImporter = new ConceptGraphCSVImporterSimple();
@@ -234,6 +211,73 @@ public class GraphUtils {
     public static List<String> getRelaxedStopWords() {
         List<String> stopWordsList = getListOfValues(GlobalProperties.getSetting("data.semnatics.relaxed_stop_words"));
         return stopWordsList;
+    }
+
+    /**
+     * Clean up errors in graph (passed graph will be changed by reference):
+     *  - remove multiple edges of the same type between two nodes
+     *  - fix missing second synonym edge (opposite direction) between two nodes
+     * @param graph
+     */
+    public static void sanitizeGraph(Graph<String, ConceptEdge> graph) {
+        GraphIterator<String, DefaultEdge> iterator = new DepthFirstIterator(graph, GraphUtils._CONCEPT_ROOT_NODE);
+        while (iterator.hasNext()) {
+            String nextVertex = iterator.next();
+            Set<String> directChildren = new HashSet<>();
+            Set<ConceptEdge> edgesOutgoing = graph.outgoingEdgesOf(nextVertex);
+            for (ConceptEdge edge : edgesOutgoing) {
+                directChildren.add(edge.getTarget());
+            }
+            for ( String directChildVertex : directChildren ) {
+                Set<ConceptEdge> directEdges = graph.getAllEdges(nextVertex, directChildVertex);
+                int genCount = 0;
+                int hyperCount = 0;
+                int synonymCount = 0;
+                for (Iterator<ConceptEdge> it = directEdges.iterator(); it.hasNext();) {
+                    ConceptEdge edge = it.next();
+                    if (ConceptEdge._RELATION_TYPE_GENERIC.equals(edge.getRelationType())) {
+                        if (genCount == 0)
+                            genCount++;
+                        else {
+                            it.remove();
+                            graph.removeEdge(edge);
+                        }
+                    } else if (ConceptEdge._RELATION_TYPE_HYPERNYM.equals(edge.getRelationType())) {
+                        if (hyperCount == 0)
+                            hyperCount++;
+                        else {
+                            it.remove();
+                            graph.removeEdge(edge);
+                        }
+                    } else if (ConceptEdge._RELATION_TYPE_SYNONYM.equals(edge.getRelationType())) {
+                        if (synonymCount == 0)
+                            synonymCount++;
+                        else {
+                            it.remove();
+                            graph.removeEdge(edge);
+                        }
+
+                        //now check situation when there is only one synonym edge but there is no corresponding one with different direction
+                        //now we found syn edge "nextVertex -syn-> directChildVertex". Checking for "nextVertex <-syn- directChildVertex"
+                        Set<ConceptEdge> edgesDifferentDirection = graph.getAllEdges(directChildVertex, nextVertex);
+                        boolean isSynonymEdgeFound = false;
+                        for (ConceptEdge edgeDifferentDirection : edgesDifferentDirection) {
+                            if (ConceptEdge._RELATION_TYPE_SYNONYM.equals(edgeDifferentDirection.getRelationType())) {
+                                isSynonymEdgeFound = true;
+                                break;
+                            }
+                        }
+                        if (!isSynonymEdgeFound) {
+                            ConceptEdge newSynonymEdge = new ConceptEdge(edge.getRelationType(),
+                                    (String) edge.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY),
+                                    (String) edge.getAttributes().get(ConceptEdge._ATTR_KEY_UNSPSC_CATEGORY_NAME));
+                            newSynonymEdge.setEdgeSourceDestination(directChildVertex, nextVertex);
+                            graph.addEdge(directChildVertex, nextVertex, newSynonymEdge);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public static class SemanticCategoryEnrichmentObject {
